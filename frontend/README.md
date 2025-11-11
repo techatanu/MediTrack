@@ -1,16 +1,77 @@
-# React + Vite
+# MediTrack Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive React frontend for the MediTrack Personal Health Record System.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🏠 Landing page with hero section and feature cards
+- 🔐 Authentication (Login & Signup)
+- 📊 Dashboard with user welcome message
+- 🎨 Modern UI with TailwindCSS
+- 📱 Fully responsive design
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 18
+- React Router DOM
+- TailwindCSS
+- Axios
+- Vite
 
-## Expanding the ESLint configuration
+## Setup
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. Install dependencies:
+```bash
+npm install
+```
+
+2. Create a `.env` file in the root directory (optional):
+```env
+VITE_API_BASE_URL=http://localhost:5000/api
+```
+
+3. Start the development server:
+```bash
+npm run dev
+```
+
+The app will be available at `http://localhost:3000`
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── Navbar.jsx       # Navigation component
+│   └── FeatureCard.jsx  # Reusable feature card
+├── pages/
+│   ├── Home.jsx         # Landing page
+│   ├── Login.jsx        # Login page
+│   ├── Signup.jsx       # Signup page
+│   └── Dashboard.jsx    # Dashboard page
+├── utils/
+│   └── api.js           # API utility functions
+├── App.jsx              # Main app component with routes
+├── index.css            # TailwindCSS imports
+└── main.jsx             # Entry point
+```
+
+## API Endpoints
+
+The frontend expects the following backend endpoints:
+
+- `POST /api/auth/login` - User login
+- `POST /api/auth/signup` - User registration
+
+## Build
+
+```bash
+npm run build
+```
+
+## Preview Production Build
+
+```bash
+npm run preview
+```
+

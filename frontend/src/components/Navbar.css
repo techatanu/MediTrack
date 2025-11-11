@@ -1,0 +1,132 @@
+.navbar {
+  width: 100%;
+  padding: 1rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #a4b0be(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: all 0.3s ease;
+}
+
+
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  text-decoration: none;
+  transition: transform 0.25s ease;
+}
+
+
+.navbar-logo-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #0652DD 0%, #1289A7 85%);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 12px rgba(71, 218, 209, 0.25), 0 2px 6px rgba(115, 129, 255, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+
+.navbar-logo-icon span {
+  color: white;
+  font-weight: 800;
+  font-size: 1.625rem;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.5px;
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #0652DD 0%, #1289A7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.3px;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.navbar-link {
+   background: #0652DD;
+  color: white;
+  padding: 0.75rem 1.75rem;
+  border-radius: 11px;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 3px 10px rgba(71, 218, 209, 0.25), 0 1px 4px rgba(115, 129, 255, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  letter-spacing: 0.2px;
+}
+
+
+
+.navbar-btn {
+  background: #0652DD;
+  color: white;
+  padding: 0.75rem 1.75rem;
+  border-radius: 11px;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 3px 10px rgba(71, 218, 209, 0.25), 0 1px 4px rgba(115, 129, 255, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  letter-spacing: 0.2px;
+}
+
+
+
+
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.875rem 1.25rem;
+  }
+
+  .navbar-logo-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .navbar-logo-icon span {
+    font-size: 1.4rem;
+  }
+
+  .navbar-brand {
+    font-size: 1.3rem;
+  }
+
+  .navbar-actions {
+    gap: 0.5rem;
+  }
+
+  .navbar-btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+  }
+
+  .navbar-link {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+}

@@ -7,46 +7,64 @@ dotenv.config();
 
 const app = express();
 
-// Basic middleware
-app.use(express.json());
-app.use(cors());
+// ---- CORS (allow Vite dev origins) ----
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+];
 
-// Request logger (helps see why requests get 403)
+const corsOptions = {
+  origin(origin, cb) {
+    // allow same-origin or server-to-server (no Origin header)
+    if (!origin) return cb(null, true);
+    if (allowedOrigins.includes(origin)) return cb(null, true);
+    return cb(new Error("Not allowed by CORS"));
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // handle all preflight requests
 app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
-  console.log("Headers:", req.headers && { origin: req.headers.origin, "content-type": req.headers["content-type"] });
-  if (req.body) console.log("Body:", req.body);
+  // ensure caches don’t mix responses per origin
+  res.setHeader("Vary", "Origin");
   next();
 });
 
-// Import routes (use lowercase file name to avoid case issues)
-const authRoutes = require("./routes/Auth");
-app.use("/api/auth", authRoutes);
+// Body parser
+app.use(express.json());
 
-// Health route
-app.get("/", (req, res) => res.send("API is running..."));
-
-// Connect to MongoDB
-if (!process.env.MONGO_URI) {
-  console.error("❌ MONGO_URI missing in .env");
-  process.exit(1);
-}
-const masked = process.env.MONGO_URI.replace(/:(.*)@/, ':****@');
-console.log("Attempting MongoDB connection to:", masked);
-
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => {
-    console.error("❌ MongoDB connection error:", err.message || err);
-    process.exit(1);
-  });
-
-// Generic error handler
-app.use((err, req, res, next) => {
-  console.error("Unhandled error:", err);
-  res.status(500).json({ error: "Internal Server Error" });
+// simple logger
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+  next();
 });
 
+// routes
+
+app.use("/api/auth", require("./routes/Auth"));
+app.get("/api/health", (req, res) => res.json({ ok: true }));
+
+// DB + server start
 const PORT = process.env.PORT || 5000;
-// bind to IPv4 localhost to avoid hitting macOS AirPlay on ::1
-app.listen(PORT, "127.0.0.1", () => console.log(`🚀 Server running on port ${PORT}`));
+const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/meditrack";
+
+async function start() {
+  try {
+    console.log("Connecting MongoDB:", MONGO_URI.replace(/:(.*)@/, ":****@"));
+    await mongoose.connect(MONGO_URI);
+    console.log("✅ MongoDB connected");
+  } catch (err) {
+    console.error("❌ MongoDB connection error:", err.message);
+    // Keep server running so frontend doesn't see "Network Error"
+  }
+
+  app.listen(PORT, "127.0.0.1", () => {
+    console.log(`🚀 Server running at http://127.0.0.1:${PORT}`);
+  });
+}
+
+start();
