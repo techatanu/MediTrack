@@ -74,9 +74,6 @@
   letter-spacing: 0.3px;
 }
 
-
-
-
 .hero-btn-secondary {
   border: 2.5px solid transparent;
   background: #0652DD;
@@ -92,7 +89,6 @@
   font-size: 1.05rem;
   letter-spacing: 0.3px;
 }
-
 
 .features-grid {
   display: grid;

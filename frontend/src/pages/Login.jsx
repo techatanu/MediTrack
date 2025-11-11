@@ -18,10 +18,26 @@ function Login() {
             return;
         }
 
-        console.log("Mock login:", trimmedEmail);
-        localStorage.setItem('username', trimmedEmail.split('@')[0]);
-        localStorage.setItem('token', 'mock-token-123');
-        navigate('/dashboard', { replace: true });
+        try {
+            const response = await fetch('http://localhost:5050/api/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: trimmedEmail, password })
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                setLoginError(data?.message || 'Login failed');
+                return;
+            }
+
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('username', data.username);
+            navigate('/dashboard', { replace: true });
+        } catch (err) {
+            setLoginError('Network error. Please try again.');
+        }
     }
     
     return (

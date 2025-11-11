@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar'
 import FeatureCard from '../components/FeatureCard'
 import './Home.css'
 
-// Icons (using SVG components)
+
 const CloudUploadIcon = ({ className }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -29,9 +29,9 @@ const Home = () => {
       <Navbar />
       
       <div className="home-container">
-        {/* Main Card Container */}
+
         <div className="home-card">
-          {/* Hero Section */}
+
           <div className="hero-section">
             <h1 className="hero-title">
               Your medical records, organized and accessible <br />whenever you need them.
@@ -49,7 +49,7 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Feature Cards */}
+
           <div className="features-grid">
             <FeatureCard
               icon={CloudUploadIcon}

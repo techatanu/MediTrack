@@ -24,10 +24,34 @@ function Signup() {
             return;
         }
 
-        console.log("Mock signup:", { fname, lname, email: trimmedEmail });
-        localStorage.setItem('username', fname || trimmedEmail.split('@')[0]);
-        localStorage.setItem('token', 'mock-token-123');
-        navigate('/dashboard', { replace: true });
+        try {
+            const response = await fetch('http://localhost:5050/api/users/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    firstName: fname,
+                    lastName: lname,
+                    email: trimmedEmail,
+                    password: password
+                }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                setErrorMsg(errorData.message || 'Signup failed. Please try again.');
+                return;
+            }
+
+            const data = await response.json();
+
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('username', data.username || fname || trimmedEmail.split('@')[0]);
+            navigate('/dashboard', { replace: true });
+        } catch (error) {
+            setErrorMsg('An error occurred. Please try again later.');
+        }
     };
 
     return (

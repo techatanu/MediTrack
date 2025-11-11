@@ -31,14 +31,14 @@ const Dashboard = () => {
               <h1 className="dashboard-title">
                 Welcome, {username}
               </h1>
-              <p className="dashboard-subtitle">Manage your medical records</p>
+              <p className="dashboard-subtitle">This is your medical records</p>
             </div>
             <button onClick={handleLogout} className="logout-btn">
               Logout
             </button>
           </div>
 
-          {/* Stats Cards */}
+
           <div className="stats-grid">
             <div className="stat-card turquoise">
               <h3 className="stat-title">Total Records</h3>
@@ -54,7 +54,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Info Section */}
+
           <div className="info-section">
             <div className="info-content">
               <div className="info-icon">
@@ -71,13 +71,13 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Quick Actions */}
+
           <div className="actions-grid">
             <button className="action-btn purple">
-              📄 Upload Medical Record
+              Upload Medical Record
             </button>
             <button className="action-btn turquoise">
-              📅 Schedule Appointment
+              Schedule Appointment
             </button>
           </div>
         </div>
