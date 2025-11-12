@@ -25,7 +25,7 @@ function Signup() {
         }
 
         try {
-            const response = await fetch('http://localhost:5050/api/users/signup', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/users/signup`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
