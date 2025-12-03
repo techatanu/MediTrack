@@ -77,7 +77,7 @@ Place your background image in the `/frontend/public/` directory.
 Example: `/frontend/public/background.jpg`
 
 ### Step 2: Update the CSS
-Edit `/frontend/src/pages/Home.css` and update line 5:
+Edit `/frontend/src/pages/Home.css` and update line 26:
 ```css
 background-image: url('/background.jpg');
 ```

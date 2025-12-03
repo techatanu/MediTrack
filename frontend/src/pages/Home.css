@@ -4,8 +4,8 @@
  * To add a full background image to the landing page:
  * 
  * 1. Place your image in the /frontend/public/ directory (e.g., background.jpg)
- * 2. Update the background-image URL on line 5 to: url('/background.jpg')
- * 3. Adjust the overlay opacity on line 22 if needed (0.1 = 10% white overlay)
+ * 2. Update the background-image URL on line 26 to: url('/background.jpg')
+ * 3. Adjust the overlay opacity on line 43 if needed (0.1 = 10% white overlay)
  * 
  * CSS Properties Explained:
  * - background-size: cover        -> Image covers entire viewport
