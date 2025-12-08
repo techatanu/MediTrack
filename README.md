@@ -55,9 +55,9 @@ There’s a strong need for a **secure, centralized platform** to organize and s
 | **Authentication** | JWT (JSON Web Token) |
 | **Hosting** | 
 Vercel (Frontend) - https://medi-track-lemon.vercel.app/
-Render (Backend) - https://meditrack-a8w2.onrender.com/api
+Render (Backend) - https://meditrack-backend-2zb0.onrender.com/api
 
-Supabase (Database) - https://supabase.com/dashboard/project/gcacoltwdrxfoixjczte/editor/17462
+
 
 ---
 
