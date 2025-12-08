@@ -111,7 +111,7 @@ router.put('/profile', async (req, res) => {
       return res.status(401).json({ error: { message: 'Invalid or expired token' } });
     }
 
-    const { dateOfBirth, gender, bloodGroup, height, weight } = req.body;
+    const { firstName, lastName, email, dateOfBirth, gender, bloodGroup, height, weight } = req.body;
 
     // Find and update user
     const user = await User.findById(decoded.id);
@@ -120,7 +120,10 @@ router.put('/profile', async (req, res) => {
       return res.status(404).json({ error: { message: 'User not found' } });
     }
 
-    // Update only provided fields
+    // Update fields
+    if (firstName) user.firstName = firstName;
+    if (lastName) user.lastName = lastName;
+    if (email) user.email = email;
     if (dateOfBirth !== undefined) user.dateOfBirth = dateOfBirth;
     if (gender !== undefined) user.gender = gender;
     if (bloodGroup !== undefined) user.bloodGroup = bloodGroup;

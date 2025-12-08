@@ -21,7 +21,7 @@ function Login() {
         }
 
         try {
-            const response = await fetch('http://localhost:5050/api/users/login', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/users/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -36,7 +36,7 @@ function Login() {
 
 
             login({
-                username: data.data?.firstName || trimmedEmail.split('@')[0], 
+                username: data.data?.firstName || trimmedEmail.split('@')[0],
                 firstName: data.data?.firstName || trimmedEmail.split('@')[0],
                 token: data.token
             });
