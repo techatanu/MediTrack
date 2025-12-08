@@ -1,11 +1,16 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import connectDB from './config/db.js';
 import userRoutes from './routes/users.js';
 import reportRoutes from './routes/reports.js';
+import doctorRoutes from './routes/doctors.js';
 
 const app = express();
 const PORT = process.env.PORT || 5050;
+
+// Connect to MongoDB
+connectDB();
 
 
 app.use(cors({
@@ -14,14 +19,22 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Global Request Logger
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  console.log('Body:', req.body);
+  next();
+});
+
 
 app.use('/api/users', userRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/doctors', doctorRoutes);
 
 
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
+  res.json({
+    status: 'OK',
     message: 'MediTrack API is running',
     timestamp: new Date().toISOString()
   });
@@ -40,8 +53,8 @@ app.use((err, req, res, next) => {
 
 
 app.use((req, res) => {
-  res.status(404).json({ 
-    error: { message: 'Route not found' } 
+  res.status(404).json({
+    error: { message: 'Route not found' }
   });
 });
 

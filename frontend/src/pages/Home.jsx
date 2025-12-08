@@ -1,80 +1,64 @@
-import { Link } from 'react-router-dom'
-import Navbar from '../components/Navbar'
-import FeatureCard from '../components/FeatureCard'
-import './Home.css'
-
-
-const CloudUploadIcon = ({ className }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-  </svg>
-)
-
-const LockIcon = ({ className }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-  </svg>
-)
-
-const DocumentSearchIcon = ({ className }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-  </svg>
-)
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Lock, Folder, Smartphone } from 'lucide-react';
+import Navbar from '../components/Navbar';
+import Button from '../components/Button';
+import './Home.css';
 
 const Home = () => {
   return (
-    <div className="home-wrapper">
+    <div className="home-page">
       <Navbar />
-      
-      <div className="home-container">
 
-        <div className="home-card">
-
-          <div className="hero-section">
-            <h1 className="hero-title">
-              Your medical records, organized and accessible <br />whenever you need them.
-            </h1>
+      {/* Hero Section */}
+      <section className="hero-section">
+        <div className="container hero-container">
+          <div className="hero-content">
+            <p className="hero-subtitle">Professional Medical Application</p>
+            <h1 className="hero-title">Never Lose Your Medical Records Again.</h1>
             <p className="hero-description">
-              No more digging through folders or old messages — find your health info in seconds.
+              Visiting a new doctor? Need an old prescription? Stop digging through WhatsApp chats and messy folders. Upload once, access forever—from any device, anytime.
             </p>
-            <div className="hero-buttons">
-              <Link to="/signup" className="hero-btn-primary">
-                View My Dashboard
+            <div className="hero-actions">
+              <Link to="/signup">
+                <Button variant="primary" size="large">Get started</Button>
               </Link>
-              <Link to="/login" className="hero-btn-secondary">
-                Login
-              </Link>
+              <Button variant="outline" size="large">Learn more →</Button>
             </div>
           </div>
+        </div>
+      </section>
 
+      {/* Features Section */}
+      <section className="features-section">
+        <div className="container features-container">
+          <div className="feature-card">
+            <div className="feature-icon">
+              <Lock size={24} />
+            </div>
+            <h3>Secure Storage</h3>
+            <p>Upload your prescriptions, lab reports, and blood test results once. We store them safely so only you can see them. No more asking family members to send old documents or searching through your phone's gallery at the doctor's office.</p>
+          </div>
 
-          <div className="features-grid">
-            <FeatureCard
-              icon={CloudUploadIcon}
-              title="Easy Upload"
-              description="Effortlessly add new reports from any device."
-              iconColor="green"
-            />
-            <FeatureCard
-              icon={LockIcon}
-              title="Secure Storage"
-              description="Your data encrypted and protected."
-              iconColor="blue"
-            />
-            <FeatureCard
-              icon={DocumentSearchIcon}
-              title="Quick Access"
-              description="Find what you need in seconds."
-              iconColor="blue"
-            />
+          <div className="feature-card">
+            <div className="feature-icon">
+              <Folder size={24} />
+            </div>
+            <h3>Easy Organization</h3>
+            <p>All your health records in one place—organized by date, so you can actually find what you need. Whether it's last year's prescription or your blood group report, it's right there when the doctor asks for it.</p>
+          </div>
+
+          <div className="feature-card">
+            <div className="feature-icon">
+              <Smartphone size={24} />
+            </div>
+            <h3>Anywhere Access</h3>
+            <p>At a new hospital? Traveling? Emergency situation? Just log in from any phone or computer and your complete medical history is ready. No more 'I left it at home' moments when doctors need your previous reports.</p>
           </div>
         </div>
-      </div>
+      </section>
     </div>
-  )
-}
+  );
+};
 
-export default Home
-
+export default Home;

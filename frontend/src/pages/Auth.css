@@ -3,7 +3,10 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #e8f4f8 0%, #f0f7fb 50%, #fef5ed 100%);
+  background: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url('/landingpage.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   padding: 2rem 1rem;
 }
 
@@ -145,6 +148,7 @@
 }
 
 @media (max-width: 480px) {
+
   .auth-inner,
   .auth-i {
     padding: 2rem 1.5rem;

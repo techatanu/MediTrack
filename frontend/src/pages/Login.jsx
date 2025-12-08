@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import './Auth.css';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import './Auth.css';
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loginError, setLoginError] = useState(null);
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoginError(null);
-        
+
         const trimmedEmail = email.trim();
         if (!trimmedEmail || !password) {
             setLoginError('Please enter email and password');
@@ -32,22 +34,27 @@ function Login() {
                 return;
             }
 
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('username', data.username);
+
+            login({
+                username: data.data?.firstName || trimmedEmail.split('@')[0], // Fallback
+                firstName: data.data?.firstName || trimmedEmail.split('@')[0],
+                token: data.token
+            });
+
             navigate('/dashboard', { replace: true });
         } catch (err) {
             setLoginError('Network error. Please try again.');
         }
     }
-    
+
     return (
         <div className="auth-wrapper">
-            <div className="auth-i">
+            <div className="auth-inner">
                 <form onSubmit={handleSubmit}>
                     <h3>Login</h3>
                     <div className="structure">
                         <label>Email address</label>
-                        <input 
+                        <input
                             type="email"
                             className="form-control"
                             placeholder="Enter email"
@@ -57,15 +64,15 @@ function Login() {
                     </div>
                     <div className="structure">
                         <label>Password</label>
-                        <input 
+                        <input
                             type="password"
                             className="form-control"
                             placeholder="Enter Password"
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)} 
+                            onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
-                    {loginError && <p style={{color:'red', marginBottom: '10px'}}>{loginError}</p>}
+                    {loginError && <p style={{ color: 'red', marginBottom: '10px' }}>{loginError}</p>}
                     <div className="d-grid">
                         <button type="submit" className="btn btn-primary">
                             Submit

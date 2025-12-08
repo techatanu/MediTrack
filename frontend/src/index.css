@@ -1,24 +1,50 @@
-* { 
+:root {
+  --color-primary: #0f4c5c; 
+  --color-secondary: #e0f2f1; 
+  --color-accent: #10b981; 
+  --color-background: #ffffff;
+  --color-text-main: #1f2937;
+  --color-text-muted: #6b7280;
+  --color-border: #e5e7eb;
+  --color-card-bg: #ffffff;
+  --font-family: 'Inter', sans-serif;
+}
+
+* {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
 body {
-  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-family);
+  background-color: #f3f4f6; 
+  color: var(--color-text-main);
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #f8fbff 0%, #e9f3ff 100%);
-  min-height: 100vh;
-  color: #2d3748;
-  line-height: 1.6;
 }
 
-#root { 
-  min-height: 100vh;
+a {
+  text-decoration: none;
+  color: inherit;
 }
 
-html {
-  scroll-behavior: smooth;
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  font-family: inherit;
 }
+
+ul {
+  list-style: none;
+}
+
+.container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0;
+}
+
 

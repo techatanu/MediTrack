@@ -1,6 +1,8 @@
 import express from 'express';
+import upload from '../config/cloudinary.js';
+import auth from '../middleware/auth.js';
 import {
-  getAllReports,
+  getReports,
   getReportById,
   createReport,
   updateReport,
@@ -9,9 +11,14 @@ import {
 
 const router = express.Router();
 
-router.get('/', getAllReports);
+// Public routes (none for now)
+
+// Protected routes
+router.use(auth); // Apply auth middleware to all routes below
+
+router.get('/', getReports);
+router.post('/', upload.single('image'), createReport);
 router.get('/:id', getReportById);
-router.post('/', createReport);
 router.put('/:id', updateReport);
 router.delete('/:id', deleteReport);
 

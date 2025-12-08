@@ -1,0 +1,257 @@
+.about-page {
+    /* Font inherited from body (Inter) */
+    background-color: var(--color-background);
+    min-height: 100vh;
+}
+
+.about-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+}
+
+.about-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.about-header h1 {
+    font-size: 3rem;
+    color: var(--color-primary);
+    /* #0f4c5c */
+    margin-bottom: 1rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.about-header .subtitle {
+    font-size: 1.25rem;
+    color: var(--color-text-muted);
+    font-weight: 500;
+}
+
+.story-section {
+    background: white;
+    padding: 3rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    /* Match Home cards */
+    margin-bottom: 3rem;
+    border: 1px solid var(--color-border);
+}
+
+.story-section h2 {
+    font-size: 1.75rem;
+    color: var(--color-text-main);
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+}
+
+.story-section p {
+    font-size: 1.1rem;
+    color: var(--color-text-main);
+    margin-bottom: 1.25rem;
+    line-height: 1.7;
+}
+
+.story-section .highlight {
+    background: var(--color-secondary);
+    /* #e0f2f1 */
+    border-left: 4px solid var(--color-primary);
+    padding: 1.5rem 2rem;
+    margin: 2rem 0;
+    font-style: italic;
+    color: var(--color-primary);
+    border-radius: 0 8px 8px 0;
+}
+
+.mission-box {
+    background: var(--color-primary);
+    /* Use primary instead of random gradient */
+    color: white;
+    padding: 3rem;
+    border-radius: 16px;
+    margin: 3rem 0;
+    text-align: center;
+    box-shadow: 0 10px 15px -3px rgba(15, 76, 92, 0.2);
+}
+
+.mission-box h3 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.mission-box p {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    opacity: 0.95;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Update inline styles in JSX later, but for now specific classes */
+.section-title {
+    text-align: center;
+    margin: 4rem 0 2rem;
+    font-size: 2rem;
+    color: var(--color-text-main);
+    font-weight: 700;
+}
+
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.value-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid var(--color-border);
+}
+
+.value-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    border-color: var(--color-primary);
+}
+
+.value-card .icon {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+}
+
+.value-card h4 {
+    font-size: 1.25rem;
+    color: var(--color-primary);
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+}
+
+.value-card p {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+}
+
+.creator-section {
+    background: white;
+    padding: 3rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    margin: 3rem 0;
+    border: 1px solid var(--color-border);
+}
+
+.creator-section h3 {
+    font-size: 1.5rem;
+    color: var(--color-text-main);
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.badge {
+    display: inline-block;
+    background: #fef3c7;
+    /* Warning-like color for 'In Development' */
+    color: #92400e;
+    padding: 0.5rem 1rem;
+    border-radius: 99px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+}
+
+.future-section {
+    background: var(--color-background);
+    padding: 3rem;
+    border-radius: 16px;
+    border: 2px dashed var(--color-border);
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.future-section h3 {
+    font-size: 1.5rem;
+    color: var(--color-text-main);
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.future-section p {
+    color: var(--color-text-muted);
+    line-height: 1.7;
+    max-width: 800px;
+    margin: 0 auto 1rem;
+}
+
+
+/* Responsive Design - Enhanced */
+@media (max-width: 1024px) {
+    .about-container {
+        padding: 2.5rem 1.5rem;
+    }
+
+    .about-header h1 {
+        font-size: 2.75rem;
+    }
+
+    .values-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .about-header h1 {
+        font-size: 2.25rem;
+    }
+
+    .about-container {
+        padding: 2rem 1rem;
+    }
+
+    .story-section {
+        padding: 2rem 1.5rem;
+    }
+
+    .values-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mission-box {
+        padding: 2.5rem 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-header h1 {
+        font-size: 2rem;
+    }
+
+    .about-container {
+        padding: 1.5rem 0.75rem;
+    }
+
+    .story-section {
+        padding: 1.5rem 1rem;
+    }
+
+    .story-section h2 {
+        font-size: 1.5rem;
+    }
+
+    .mission-box {
+        padding: 2rem 1.5rem;
+    }
+
+    .creator-section {
+        padding: 2rem 1.5rem;
+    }
+}

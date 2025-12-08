@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import './Auth.css';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import './Auth.css';
 
 function Signup() {
     const [email, setEmail] = useState("");
@@ -9,10 +10,13 @@ function Signup() {
     const [lname, setLName] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleRegister = async (e) => {
         e.preventDefault();
         setErrorMsg("");
+        console.log("API URL:", import.meta.env.VITE_API_URL);
+        console.log("Form Data:", { fname, lname, email, password });
 
         const trimmedEmail = (email || "").trim();
         if (!trimmedEmail) {
@@ -46,10 +50,16 @@ function Signup() {
 
             const data = await response.json();
 
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('username', data.username || fname || trimmedEmail.split('@')[0]);
-            navigate('/dashboard', { replace: true });
+            // Use auth context to login
+            login({
+                username: data.username || fname || trimmedEmail.split('@')[0],
+                token: data.token
+            });
+
+            // Redirect to profile completion page instead of dashboard
+            navigate('/complete-profile', { replace: true });
         } catch (error) {
+            console.error("Signup Error:", error);
             setErrorMsg('An error occurred. Please try again later.');
         }
     };
@@ -61,7 +71,7 @@ function Signup() {
                     <h3>Sign Up</h3>
                     <div className="structure">
                         <label>First name</label>
-                        <input 
+                        <input
                             type="text"
                             className="form-control"
                             placeholder="Enter first name"
@@ -72,8 +82,8 @@ function Signup() {
                     </div>
                     <div className="structure">
                         <label>Last name</label>
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             className="form-control"
                             placeholder="Enter Last name"
                             value={lname}
@@ -82,8 +92,8 @@ function Signup() {
                     </div>
                     <div className="structure">
                         <label>Email</label>
-                        <input 
-                            type="email" 
+                        <input
+                            type="email"
                             className="form-control"
                             placeholder="Enter email"
                             value={email}
@@ -93,8 +103,8 @@ function Signup() {
                     </div>
                     <div className="structure">
                         <label>Password</label>
-                        <input 
-                            type="password" 
+                        <input
+                            type="password"
                             className="form-control"
                             placeholder="Enter password"
                             value={password}
@@ -110,7 +120,7 @@ function Signup() {
                     <p className="forgot-password text-right">
                         Already registered <a href="/login">Login</a>
                     </p>
-                    {errorMsg && <div style={{color:'red', marginTop: '10px'}}>{errorMsg}</div>}
+                    {errorMsg && <div style={{ color: 'red', marginTop: '10px' }}>{errorMsg}</div>}
                 </form>
             </div>
         </div>
