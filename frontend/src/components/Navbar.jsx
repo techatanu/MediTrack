@@ -9,7 +9,7 @@ const Navbar = () => {
       <div className="container navbar-container">
         <Link to="/" className="navbar-logo">
           <div className="logo-icon">
-          <img src="/MediTrackLogo.png" alt="meditrack-logo" />
+            <img src="/MediTrackLogo.png" alt="meditrack-logo" />
           </div>
           <span>MediTrack</span>
         </Link>
@@ -18,7 +18,7 @@ const Navbar = () => {
           <li><Link to="/">Home</Link></li>
           <li><Link to="/about">About us</Link></li>
           <li><Link to="/dashboard">Dashboard</Link></li>
-          <li><Link to="/blog">Blog</Link></li>
+          <li><Link to="/profile">Admin Dashboard</Link></li>
         </ul>
 
         <div className="navbar-actions">

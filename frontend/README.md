@@ -30,6 +30,11 @@ npm install
 VITE_API_BASE_URL=http://localhost:5000/api
 ```
 
+OR for production:
+```env
+VITE_API_BASE_URL=https://meditrack-backend-2zb0.onrender.com/api
+```
+
 3. Start the development server:
 ```bash
 npm run dev
