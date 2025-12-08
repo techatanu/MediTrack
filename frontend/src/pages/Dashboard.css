@@ -7,7 +7,7 @@
 .dashboard-main {
   flex: 1;
   margin-left: 250px;
-  /* Sidebar width */
+
   display: flex;
   flex-direction: column;
 }
@@ -35,7 +35,7 @@
   padding: 0.5rem 1rem;
   border-radius: 8px;
   width: 400px;
-  /* Slightly wider for better usability */
+
   transition: all 0.2s ease;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -316,12 +316,11 @@
   padding-right: 2rem;
 }
 
-/* Responsive Design */
-/* iPad Pro and below */
+
 @media (max-width: 1024px) {
   .dashboard {
     margin-left: 200px;
-    /* Reduced sidebar width */
+
   }
 
   .dashboard-content {
@@ -337,11 +336,11 @@
   }
 }
 
-/* iPad Mini and below */
+
 @media (max-width: 768px) {
   .dashboard {
     margin-left: 0;
-    /* Remove sidebar margin */
+
   }
 
   .dashboard-content {
@@ -374,7 +373,7 @@
   }
 }
 
-/* iPhone 12 Pro and below */
+
 @media (max-width: 480px) {
   .dashboard-content {
     padding: 0.75rem;

@@ -2,7 +2,7 @@
   background-color: white;
   color: var(--color-primary);
   padding: 1.5rem 0;
-  /* Increased padding again */
+
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
@@ -13,25 +13,21 @@
   max-width: 1440px;
   margin: 0 auto;
   padding: 0 1rem 0 1rem;
-  /* Reduced left padding to move logo closer to edge */
-}
+  }
 
 .navbar-logo {
   display: flex;
   align-items: center;
   gap: 16px;
-  /* Increased gap */
   text-decoration: none;
   font-weight: 800;
   font-size: 2rem;
-  /* Much larger brand text (approx 32px) */
   color: var(--color-primary);
 }
 
 .logo-icon {
   width: auto;
   height: 90px;
-  /* Increased from 72px to 90px */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -46,13 +42,13 @@
 .navbar-links {
   display: flex;
   gap: 3.5rem;
-  /* Wider spacing */
+
 }
 
 .navbar-links a {
   color: var(--color-text-muted);
   font-size: 1.25rem;
-  /* Larger link text (approx 20px) */
+
   transition: color 0.2s;
   font-weight: 600;
 }
@@ -77,8 +73,7 @@
   text-decoration: underline;
 }
 
-/* Responsive Design */
-/* iPad Pro and below */
+
 @media (max-width: 1024px) {
   .navbar-container {
     padding: 0 1.5rem;
@@ -106,7 +101,7 @@
   }
 }
 
-/* iPad Mini and below */
+
 @media (max-width: 768px) {
   .navbar {
     padding: 1rem 0;
@@ -142,7 +137,7 @@
   }
 }
 
-/* iPhone 12 Pro and below */
+
 @media (max-width: 480px) {
   .navbar {
     padding: 0.75rem 0;
@@ -151,37 +146,34 @@
   .navbar-container {
     padding: 0 0.75rem;
     flex-wrap: wrap;
-    /* Allow wrapping if absolutely necessary, though we try to fit */
+
     gap: 0.5rem;
-    /* Reduce gap between logo and actions if they wrap */
+
   }
 
   .navbar-logo {
     font-size: 1.1rem;
-    /* Slightly smaller text */
     gap: 6px;
   }
 
   .logo-icon {
     height: 36px;
-    /* Slightly smaller icon */
+
   }
 
   .navbar-links {
     display: none;
-    /* Hide navigation links on mobile */
   }
 
   .navbar-actions {
     gap: 0.75rem;
-    /* Tighter gap */
   }
 
   .login-link {
     font-size: 0.9rem;
   }
 
-  /* Ensure button isn't too huge */
+
   .navbar-actions button {
     padding: 0.5rem 1rem;
     font-size: 0.9rem;

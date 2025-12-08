@@ -18,7 +18,6 @@ const Reports = () => {
         const fetchReports = async () => {
             try {
                 const token = localStorage.getItem('token');
-                // Debounce search already handled by useEffect delay below
 
                 const query = searchTerm ? `?search=${searchTerm}` : '';
                 const res = await axios.get(`${import.meta.env.VITE_API_URL}/reports${query}`, {
@@ -33,7 +32,7 @@ const Reports = () => {
             }
         };
 
-        // Debounce search
+
         const timeoutId = setTimeout(() => {
             fetchReports();
         }, 500);
@@ -41,7 +40,7 @@ const Reports = () => {
         return () => clearTimeout(timeoutId);
     }, [searchTerm]);
 
-    // Cleanup URL param if user clears search
+
     useEffect(() => {
         if (!searchTerm) {
             navigate('/reports', { replace: true });
@@ -73,14 +72,13 @@ const Reports = () => {
                                 placeholder="Search reports..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                style={{ paddingLeft: '40px' }} // Ensure text doesn't overlap icon if we changed layout
+                                style={{ paddingLeft: '40px' }} 
                             />
                         </div>
                     </div>
                     <div className="header-actions">
-                        {/* Search icon in actions is redundant if we have the input, but keeping for layout consistency */}
+                  
                         <div className="icon-btn" style={{ opacity: 0.5 }}><Search size={20} /></div>
-                        {/* Notification icon removed */}
                         <div className="user-profile">
                             <img src="/demo user.png" alt="User" className="avatar" />
                         </div>

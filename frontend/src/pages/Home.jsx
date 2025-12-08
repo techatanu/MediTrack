@@ -10,7 +10,7 @@ const Home = () => {
     <div className="home-page">
       <Navbar />
 
-      {/* Hero Section */}
+
       <section className="hero-section">
         <div className="container hero-container">
           <div className="hero-content">
@@ -29,7 +29,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Features Section */}
+
       <section className="features-section">
         <div className="container features-container">
           <div className="feature-card">

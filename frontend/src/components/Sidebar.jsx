@@ -16,7 +16,7 @@ const Sidebar = () => {
                 <span>MediTrack</span>
             </Link>
 
-            {/* User Profile Section - Footer */}
+
             <div className="sidebar-footer">
                 <Link to="/profile" className="user-profile" style={{ textDecoration: 'none', color: 'inherit' }}>
                     <div className="user-avatar">

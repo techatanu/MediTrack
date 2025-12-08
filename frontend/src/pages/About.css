@@ -1,5 +1,5 @@
 .about-page {
-    /* Font inherited from body (Inter) */
+
     background-color: var(--color-background);
     min-height: 100vh;
 }
@@ -18,7 +18,7 @@
 .about-header h1 {
     font-size: 3rem;
     color: var(--color-primary);
-    /* #0f4c5c */
+
     margin-bottom: 1rem;
     font-weight: 800;
     letter-spacing: -0.02em;
@@ -35,7 +35,7 @@
     padding: 3rem;
     border-radius: 16px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    /* Match Home cards */
+
     margin-bottom: 3rem;
     border: 1px solid var(--color-border);
 }
@@ -67,7 +67,7 @@
 
 .mission-box {
     background: var(--color-primary);
-    /* Use primary instead of random gradient */
+
     color: white;
     padding: 3rem;
     border-radius: 16px;
@@ -90,7 +90,7 @@
     margin: 0 auto;
 }
 
-/* Update inline styles in JSX later, but for now specific classes */
+
 .section-title {
     text-align: center;
     margin: 4rem 0 2rem;
@@ -160,7 +160,7 @@
 .badge {
     display: inline-block;
     background: #fef3c7;
-    /* Warning-like color for 'In Development' */
+
     color: #92400e;
     padding: 0.5rem 1rem;
     border-radius: 99px;
@@ -193,7 +193,7 @@
 }
 
 
-/* Responsive Design - Enhanced */
+
 @media (max-width: 1024px) {
     .about-container {
         padding: 2.5rem 1.5rem;

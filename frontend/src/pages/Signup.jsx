@@ -50,13 +50,13 @@ function Signup() {
 
             const data = await response.json();
 
-            // Use auth context to login
+
             login({
                 username: data.username || fname || trimmedEmail.split('@')[0],
                 token: data.token
             });
 
-            // Redirect to profile completion page instead of dashboard
+
             navigate('/complete-profile', { replace: true });
         } catch (error) {
             console.error("Signup Error:", error);

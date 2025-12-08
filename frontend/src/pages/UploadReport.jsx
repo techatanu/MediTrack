@@ -9,7 +9,7 @@ import axios from 'axios';
 const UploadReport = () => {
     const [file, setFile] = useState(null);
     const [title, setTitle] = useState('');
-    const [category, setCategory] = useState('Lab'); // Default to Lab
+    const [category, setCategory] = useState('Lab'); 
     const [date, setDate] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -19,22 +19,22 @@ const UploadReport = () => {
     };
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Basic validation
+
         if (!file || !title || !category || !date) {
             alert('Please fill in all required fields and select a file.');
             return;
         }
         setLoading(true);
-        // 1. Create FormData object
+
         const formData = new FormData();
         formData.append('title', title);
         formData.append('category', category);
-        formData.append('reportDate', date); // Matches backend 'reportDate'
-        formData.append('image', file); // Matches backend 'upload.single("image")'
+        formData.append('reportDate', date); 
+        formData.append('image', file); 
         try {
-            // Get token from local storage (adjust key if different)
+
             const token = localStorage.getItem('token');
-            // 4. Send to Backend
+
             const res = await axios.post(`${import.meta.env.VITE_API_URL}/reports`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -43,7 +43,7 @@ const UploadReport = () => {
             });
 
             alert('Report uploaded successfully!');
-            // Reset form
+
             setTitle('');
             setCategory('Lab');
             setDate('');

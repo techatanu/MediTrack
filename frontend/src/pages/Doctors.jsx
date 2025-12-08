@@ -4,18 +4,18 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Button from '../components/Button';
-import './Dashboard.css'; // Re-use dashboard styles for consistency
+import './Dashboard.css'; 
 
 const Doctors = () => {
     const [doctors, setDoctors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [currentDoctor, setCurrentDoctor] = useState(null); // null = create mode, object = edit mode
+    const [currentDoctor, setCurrentDoctor] = useState(null); 
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
 
-    // Form State
+
     const [formData, setFormData] = useState({
         name: '',
         specialization: '',
@@ -23,7 +23,7 @@ const Doctors = () => {
         phone: ''
     });
 
-    // Fetch Doctors
+
     const fetchDoctors = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -43,12 +43,12 @@ const Doctors = () => {
         fetchDoctors();
     }, []);
 
-    // Handle Form Change
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    // Open Modal
+
     const openModal = (doctor = null) => {
         if (doctor) {
             setCurrentDoctor(doctor);
@@ -65,13 +65,13 @@ const Doctors = () => {
         setIsModalOpen(true);
     };
 
-    // Close Modal
+
     const closeModal = () => {
         setIsModalOpen(false);
         setCurrentDoctor(null);
     };
 
-    // Submit Form (Create or Update)
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -79,14 +79,14 @@ const Doctors = () => {
             const config = { headers: { 'Authorization': `Bearer ${token}` } };
 
             if (currentDoctor) {
-                // Update
+
                 await axios.put(`${import.meta.env.VITE_API_URL}/doctors/${currentDoctor._id}`, formData, config);
             } else {
-                // Create
+
                 await axios.post(`${import.meta.env.VITE_API_URL}/doctors`, formData, config);
             }
 
-            // Refresh list and close modal
+
             fetchDoctors();
             closeModal();
         } catch (err) {
@@ -95,7 +95,7 @@ const Doctors = () => {
         }
     };
 
-    // Delete Doctor
+
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete this doctor?")) return;
 
@@ -111,7 +111,7 @@ const Doctors = () => {
         }
     };
 
-    // Filter Logic
+
     const filteredDoctors = doctors.filter(doc =>
         doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         doc.specialization.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -166,10 +166,10 @@ const Doctors = () => {
                     ) : filteredDoctors.length === 0 ? (
                         <div className="empty-state">No doctors found matching "{searchTerm}".</div>
                     ) : (
-                        <div className="reports-grid"> {/* Reusing grid layout */}
+                        <div className="reports-grid"> 
                             {filteredDoctors.map((doctor) => (
                                 <div key={doctor._id} className="stat-card" style={{ position: 'relative' }}>
-                                    {/* Using stat-card style for cleaner white box */}
+                                    
 
                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
                                         <div className="report-icon bg-blue">
@@ -212,7 +212,7 @@ const Doctors = () => {
                     )}
                 </div>
 
-                {/* Simple Modal */}
+
                 {isModalOpen && (
                     <div className="modal-overlay" style={{
                         position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,

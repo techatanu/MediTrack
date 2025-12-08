@@ -36,7 +36,7 @@ function Login() {
 
 
             login({
-                username: data.data?.firstName || trimmedEmail.split('@')[0], // Fallback
+                username: data.data?.firstName || trimmedEmail.split('@')[0], 
                 firstName: data.data?.firstName || trimmedEmail.split('@')[0],
                 token: data.token
             });

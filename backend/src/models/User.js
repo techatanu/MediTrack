@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    // Health profile fields (optional, filled after signup)
+
     dateOfBirth: {
         type: Date,
         required: false
@@ -46,12 +46,12 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-// Match password method
+
 userSchema.methods.matchPassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// Encrypt password using bcrypt
+
 userSchema.pre('save', async function () {
     if (!this.isModified('password')) {
         return;

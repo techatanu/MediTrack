@@ -108,7 +108,6 @@ const UserProfile = () => {
     return (
         <div className="profile-container">
             <div className="profile-card">
-                {/* Header */}
                 <div className="profile-header">
                     <div className="profile-header-content">
                         <div className="profile-avatar">
@@ -129,7 +128,6 @@ const UserProfile = () => {
                     </button>
                 </div>
 
-                {/* Content */}
                 <div className="profile-content">
                     <div className="section-header">
                         <h2 className="section-title">Personal Information</h2>
@@ -151,7 +149,6 @@ const UserProfile = () => {
                     )}
 
                     {!isEditing ? (
-                        // View Mode
                         <div className="info-grid">
                             <div className="info-column">
                                 <InfoItem icon={<User />} label="Full Name" value={`${user?.firstName} ${user?.lastName}`} />
@@ -166,7 +163,6 @@ const UserProfile = () => {
                             </div>
                         </div>
                     ) : (
-                        // Edit Mode
                         <form onSubmit={handleSubmit} className="edit-form">
                             <div className="form-group">
                                 <label>First Name</label>
@@ -263,7 +259,6 @@ const UserProfile = () => {
     );
 };
 
-// Helper component for View Mode info items
 const InfoItem = ({ icon, label, value }) => (
     <div className="info-item">
         <div className="info-icon">{icon}</div>

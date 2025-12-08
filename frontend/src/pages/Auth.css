@@ -8,7 +8,6 @@
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  /* Keeps background fixed during scroll */
   padding: 2rem 1rem;
   width: 100%;
 }

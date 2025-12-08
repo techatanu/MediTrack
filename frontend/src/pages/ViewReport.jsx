@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Search, Bell, ArrowLeft, Download, Trash2, FileText, Calendar, Tag } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
-import Button from '../components/Button'; // Assuming we have this
+import Button from '../components/Button'; 
 import axios from 'axios';
 import './ViewReport.css';
 
@@ -39,14 +39,14 @@ const ViewReport = () => {
         if (!report?.fileUrl) return;
         setDownloading(true);
         try {
-            // Fetch the image/pdf as a blob to force download
+
             const response = await fetch(report.fileUrl);
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
 
             const link = document.createElement('a');
             link.href = url;
-            // Extract filename from URL or default
+
             const ext = report.fileUrl.split('.').pop().split('?')[0];
             link.download = `${report.title.replace(/\s+/g, '_')}_${report._id}.${ext}`;
             document.body.appendChild(link);
@@ -55,7 +55,7 @@ const ViewReport = () => {
             window.URL.revokeObjectURL(url);
         } catch (err) {
             console.error("Download failed:", err);
-            // Fallback to opening in new tab
+
             window.open(report.fileUrl, '_blank');
         } finally {
             setDownloading(false);
@@ -70,7 +70,7 @@ const ViewReport = () => {
             await axios.delete(`${import.meta.env.VITE_API_URL}/reports/${id}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            // Navigate back to reports list
+
             navigate('/reports');
         } catch (err) {
             console.error("Delete failed:", err);
@@ -89,10 +89,10 @@ const ViewReport = () => {
             <Sidebar />
 
             <main className="dashboard-main">
-                {/* Header matching Dashboard */}
+
                 <header className="dashboard-header">
                     <div className="header-search">
-                        {/* Placeholder to match Layout */}
+
                     </div>
                     <div className="header-actions">
                         <div className="user-profile">
@@ -102,7 +102,7 @@ const ViewReport = () => {
                 </header>
 
                 <div className="dashboard-content">
-                    {/* Top Action Bar */}
+
                     <div className="page-header-actions" style={{
                         display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem'
                     }}>
@@ -205,7 +205,7 @@ const ViewReport = () => {
                             </div>
                         </div>
 
-                        {/* File Preview Card */}
+
                         <div className="card" style={{
                             background: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', minHeight: '600px', display: 'flex', flexDirection: 'column'
                         }}>

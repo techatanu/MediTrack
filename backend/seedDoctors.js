@@ -1,14 +1,14 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import Doctor from './src/models/Doctor.js';
-import User from './src/models/User.js'; // Assuming User model path
+import User from './src/models/User.js'; 
 
-// Load env vars
+
 dotenv.config();
 
 const seedDoctors = async () => {
     try {
-        // 1. Connect to MongoDB
+
         if (!process.env.MONGO_URI) {
             console.error('Error: MONGO_URI is not defined in .env');
             process.exit(1);
@@ -17,7 +17,7 @@ const seedDoctors = async () => {
         await mongoose.connect(process.env.MONGO_URI);
         console.log('MongoDB Connected for Seeding...');
 
-        // 2. Find the User
+
         const userEmail = "a@gmail.com";
         const user = await User.findOne({ email: userEmail });
 
@@ -29,11 +29,11 @@ const seedDoctors = async () => {
 
         console.log(`Found User: ${user.email} (ID: ${user._id})`);
 
-        // 3. Clear existing doctors for this user (Optional, prevents duplicates on re-run)
+
         await Doctor.deleteMany({ user: user._id });
         console.log('Cleared existing doctors for this user.');
 
-        // 4. Dummy Data
+
         const dummyDoctors = [
             {
                 name: "Dr. Sarah Smith",
@@ -72,11 +72,11 @@ const seedDoctors = async () => {
             }
         ];
 
-        // 5. Insert Data
+
         await Doctor.insertMany(dummyDoctors);
         console.log('Successfully seeded 5 dummy doctors!');
 
-        // 6. Disconnect
+
         await mongoose.disconnect();
         console.log('Disconnected from MongoDB.');
         process.exit(0);
