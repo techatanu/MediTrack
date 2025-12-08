@@ -75,6 +75,53 @@
     color: var(--color-primary);
 }
 
+/* User Profile Footer */
+.sidebar-footer {
+    padding: 1rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.user-profile:hover {
+    background-color: #f3f4f6;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--color-secondary);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-main);
+}
+
+.user-role {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+}
+
 /* Responsive Design */
 /* iPad Pro and below */
 @media (max-width: 1024px) {
@@ -90,6 +137,11 @@
 
     .logo-icon {
         height: 36px;
+    }
+
+    .user-info {
+        display: none;
+        /* Hide text on smaller tablets if needed, or keep */
     }
 }
 

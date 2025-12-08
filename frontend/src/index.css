@@ -1,7 +1,7 @@
 :root {
-  --color-primary: #0f4c5c; 
-  --color-secondary: #e0f2f1; 
-  --color-accent: #10b981; 
+  --color-primary: #0f4c5c;
+  --color-secondary: #e0f2f1;
+  --color-accent: #10b981;
   --color-background: #ffffff;
   --color-text-main: #1f2937;
   --color-text-muted: #6b7280;
@@ -18,10 +18,13 @@
 
 body {
   font-family: var(--font-family);
-  background-color: #f3f4f6; 
+  background-color: #f3f4f6;
   color: var(--color-text-main);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  /* Prevent horizontal scroll */
+  width: 100%;
 }
 
 a {
@@ -46,5 +49,3 @@ ul {
   margin: 0 auto;
   padding: 0;
 }
-
-

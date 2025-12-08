@@ -16,6 +16,19 @@ const Sidebar = () => {
                 <span>MediTrack</span>
             </Link>
 
+            {/* User Profile Section - Footer */}
+            <div className="sidebar-footer">
+                <Link to="/profile" className="user-profile" style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <div className="user-avatar">
+                        <User size={20} />
+                    </div>
+                    <div className="user-info">
+                        <span className="user-name">User Profile</span>
+                        <span className="user-role">View Details</span>
+                    </div>
+                </Link>
+            </div>
+
             <nav className="sidebar-nav">
                 <ul>
                     <li>

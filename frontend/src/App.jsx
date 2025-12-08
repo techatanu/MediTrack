@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './contexts/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
+import PublicRoute from './components/PublicRoute'
 import Home from './pages/Home'
 import About from './pages/About'
 import Dashboard from './pages/Dashboard'
@@ -11,6 +12,7 @@ import Doctors from './pages/Doctors'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import CompleteProfile from './pages/CompleteProfile'
+import UserProfile from './pages/UserProfile'
 
 function App() {
   const { isAuthenticated } = useAuth();
@@ -20,14 +22,26 @@ function App() {
 
       <Route path="/" element={<Home />} />
       <Route path="/about" element={<About />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
+      <Route path="/login" element={
+        <PublicRoute>
+          <Login />
+        </PublicRoute>
+      } />
+      <Route path="/signup" element={
+        <PublicRoute>
+          <Signup />
+        </PublicRoute>
+      } />
       <Route path="/complete-profile" element={
         <ProtectedRoute>
           <CompleteProfile />
         </ProtectedRoute>
       } />
-
+      <Route path="/profile" element={
+        <ProtectedRoute>
+          <UserProfile />
+        </ProtectedRoute>
+      } />
 
       <Route path="/dashboard" element={
         <ProtectedRoute>
@@ -56,12 +70,7 @@ function App() {
       } />
 
 
-      <Route path="/login" element={
-        isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />
-      } />
-      <Route path="/signup" element={
-        isAuthenticated ? <Navigate to="/dashboard" replace /> : <Signup />
-      } />
+
     </Routes>
   )
 }

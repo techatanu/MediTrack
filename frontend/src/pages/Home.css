@@ -240,15 +240,28 @@
 /* iPhone 12 Pro and below */
 @media (max-width: 480px) {
   .hero-section {
-    padding: 1.5rem 0.75rem;
+    padding: 2rem 1.5rem;
+    /* Increased padding */
+    background-attachment: scroll;
+    /* Reset fixed background on mobile for performance/layout */
+    min-height: auto;
+  }
+
+  .hero-container {
+    width: 100%;
+    padding: 0;
   }
 
   .hero-title {
     font-size: 2rem;
+    word-wrap: break-word;
+    /* Ensure text doesn't overflow */
+    margin-bottom: 1rem;
   }
 
   .hero-description {
     font-size: 1rem;
+    padding: 0 0.5rem;
   }
 
   .image-placeholder {
@@ -257,7 +270,7 @@
   }
 
   .features-section {
-    padding: 2rem 0.75rem;
+    padding: 2rem 1.5rem;
   }
 
   .feature-card {
