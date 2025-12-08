@@ -7,14 +7,14 @@ A modern, responsive React frontend for the MediTrack Personal Health Record Sys
 - 🏠 Landing page with hero section and feature cards
 - 🔐 Authentication (Login & Signup)
 - 📊 Dashboard with user welcome message
-- 🎨 Modern UI with TailwindCSS
+- 🎨 Modern UI with CSS
 - 📱 Fully responsive design
 
 ## Tech Stack
 
 - React 18
 - React Router DOM
-- TailwindCSS
+- CSS
 - Axios
 - Vite
 
