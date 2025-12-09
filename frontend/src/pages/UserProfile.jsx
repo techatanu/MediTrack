@@ -83,8 +83,11 @@ const UserProfile = () => {
                 },
                 body: JSON.stringify({
                     ...formData,
-                    height: Number(formData.height),
-                    weight: Number(formData.weight)
+                    gender: formData.gender || undefined,
+                    bloodGroup: formData.bloodGroup || undefined,
+                    dateOfBirth: formData.dateOfBirth || undefined,
+                    height: formData.height ? Number(formData.height) : undefined,
+                    weight: formData.weight ? Number(formData.weight) : undefined
                 })
             });
 

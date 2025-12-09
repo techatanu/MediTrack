@@ -118,11 +118,11 @@ router.put('/profile', async (req, res) => {
     if (firstName) user.firstName = firstName;
     if (lastName) user.lastName = lastName;
     if (email) user.email = email;
-    if (dateOfBirth !== undefined) user.dateOfBirth = dateOfBirth;
-    if (gender !== undefined) user.gender = gender;
-    if (bloodGroup !== undefined) user.bloodGroup = bloodGroup;
-    if (height !== undefined) user.height = height;
-    if (weight !== undefined) user.weight = weight;
+    if (dateOfBirth) user.dateOfBirth = dateOfBirth;
+    if (gender) user.gender = gender;
+    if (bloodGroup) user.bloodGroup = bloodGroup;
+    if (height) user.height = height;
+    if (weight) user.weight = weight;
 
     await user.save();
 
