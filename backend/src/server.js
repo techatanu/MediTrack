@@ -30,6 +30,14 @@ app.use('/api/users', userRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/doctors', doctorRoutes);
 
+app.get('/', (req, res) => {
+  res.json({
+    status: 'OK',
+    message: 'MediTrack Backend is running',
+    timestamp: new Date().toISOString()
+  });
+});
+
 
 app.get('/api/health', (req, res) => {
   res.json({
