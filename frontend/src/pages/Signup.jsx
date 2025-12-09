@@ -16,7 +16,7 @@ function Signup() {
         e.preventDefault();
         setErrorMsg("");
         console.log("API URL:", import.meta.env.VITE_API_URL);
-        console.log("Form Data:", { fname, lname, email, password });
+        console.log("Form Data:", { firstName: fname, lastName: lname, email, password });
 
         const trimmedEmail = (email || "").trim();
         if (!trimmedEmail) {

@@ -9,7 +9,7 @@ import doctorRoutes from './routes/doctors.js';
 const app = express();
 const PORT = process.env.PORT || 5050;
 
-// Connect to MongoDB
+
 connectDB();
 
 
@@ -19,7 +19,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Global Request Logger
+
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
   console.log('Body:', req.body);
