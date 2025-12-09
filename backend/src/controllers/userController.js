@@ -28,7 +28,6 @@ export const getUserById = async (req, res, next) => {
 };
 
 export const createUser = async (req, res, next) => {
-  console.log("--> createUser controller hit!");
   try {
     const { email, firstName, lastName, password } = req.body;
 
