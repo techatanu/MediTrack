@@ -32,14 +32,12 @@ const Reports = () => {
             }
         };
 
-
         const timeoutId = setTimeout(() => {
             fetchReports();
         }, 500);
 
         return () => clearTimeout(timeoutId);
     }, [searchTerm]);
-
 
     useEffect(() => {
         if (!searchTerm) {
@@ -77,7 +75,6 @@ const Reports = () => {
                         </div>
                     </div>
                     <div className="header-actions">
-                  
                         <div className="icon-btn" style={{ opacity: 0.5 }}><Search size={20} /></div>
                         <div className="user-profile">
                             <img src="/demo user.png" alt="User" className="avatar" />

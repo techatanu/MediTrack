@@ -1,15 +1,11 @@
 import Doctor from '../models/Doctor.js';
 
-// Create a new doctor
+
 export const createDoctor = async (req, res, next) => {
     try {
         const { name, specialization, hospital, phone } = req.body;
 
-        // Check if doctor already exists for this user (optional, but good practice)
-        // const existingDoctor = await Doctor.findOne({ name, user: req.user.id });
-        // if (existingDoctor) {
-        //   return res.status(400).json({ error: { message: 'Doctor already exists' } });
-        // }
+        
 
         const doctor = await Doctor.create({
             name,
@@ -25,7 +21,7 @@ export const createDoctor = async (req, res, next) => {
     }
 };
 
-// Get all doctors for the logged-in user
+
 export const getDoctors = async (req, res, next) => {
     try {
         const doctors = await Doctor.find({ user: req.user.id });
@@ -35,7 +31,7 @@ export const getDoctors = async (req, res, next) => {
     }
 };
 
-// Update a doctor
+
 export const updateDoctor = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -57,7 +53,7 @@ export const updateDoctor = async (req, res, next) => {
     }
 };
 
-// Delete a doctor
+
 export const deleteDoctor = async (req, res, next) => {
     try {
         const { id } = req.params;

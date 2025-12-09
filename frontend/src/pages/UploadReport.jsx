@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Upload, Search, Bell, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
@@ -11,12 +11,31 @@ const UploadReport = () => {
     const [title, setTitle] = useState('');
     const [category, setCategory] = useState('Lab'); 
     const [date, setDate] = useState('');
+    const [doctorId, setDoctorId] = useState('');
+    const [doctors, setDoctors] = useState([]);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        fetchDoctors();
+    }, []);
+
+    const fetchDoctors = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/doctors`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            setDoctors(res.data.data);
+        } catch (err) {
+            console.error('Error fetching doctors:', err);
+        }
+    };
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
     };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -30,9 +49,12 @@ const UploadReport = () => {
         formData.append('title', title);
         formData.append('category', category);
         formData.append('reportDate', date); 
-        formData.append('image', file); 
-        try {
+        formData.append('image', file);
+        if (doctorId) {
+            formData.append('doctor', doctorId);
+        }
 
+        try {
             const token = localStorage.getItem('token');
 
             const res = await axios.post(`${import.meta.env.VITE_API_URL}/reports`, formData, {
@@ -47,6 +69,7 @@ const UploadReport = () => {
             setTitle('');
             setCategory('Lab');
             setDate('');
+            setDoctorId('');
             setFile(null);
         } catch (err) {
             console.error(err);
@@ -55,6 +78,7 @@ const UploadReport = () => {
             setLoading(false);
         }
     };
+
     return (
         <div className="dashboard-layout">
             <Sidebar />
@@ -74,7 +98,6 @@ const UploadReport = () => {
                     </div>
                     <div className="header-actions">
                         <div className="icon-btn"><Search size={20} /></div>
-                        {/* Notification removed */}
                         <div className="user-profile">
                             <img src="/demo user.png" alt="User" className="avatar" />
                         </div>
@@ -83,7 +106,7 @@ const UploadReport = () => {
                 <div className="dashboard-content">
                     <h1 className="page-title">Upload Report</h1>
                     <div className="upload-container">
-                        {/* Title Input */}
+
                         <div className="form-group">
                             <label>Report Title *</label>
                             <input
@@ -94,7 +117,7 @@ const UploadReport = () => {
                                 onChange={(e) => setTitle(e.target.value)}
                             />
                         </div>
-                        {/* Category Select */}
+
                         <div className="form-group">
                             <label>Category *</label>
                             <select
@@ -106,7 +129,23 @@ const UploadReport = () => {
                                 <option value="Prescription">Prescription</option>
                             </select>
                         </div>
-                        {/* Date Input */}
+
+                        <div className="form-group">
+                            <label>Doctor (Optional)</label>
+                            <select
+                                className="form-select"
+                                value={doctorId}
+                                onChange={(e) => setDoctorId(e.target.value)}
+                            >
+                                <option value="">Select a doctor</option>
+                                {doctors.map((doctor) => (
+                                    <option key={doctor._id} value={doctor._id}>
+                                        Dr. {doctor.name} - {doctor.specialization}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
                         <div className="form-group">
                             <label>Date of Report *</label>
                             <input
@@ -116,7 +155,7 @@ const UploadReport = () => {
                                 onChange={(e) => setDate(e.target.value)}
                             />
                         </div>
-                        {/* File Drop/Input */}
+
                         <div className="form-group">
                             <label>Upload File *</label>
                             <div className="drop-zone" style={{ position: 'relative' }}>

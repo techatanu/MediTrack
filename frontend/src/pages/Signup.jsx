@@ -15,8 +15,6 @@ function Signup() {
     const handleRegister = async (e) => {
         e.preventDefault();
         setErrorMsg("");
-        console.log("API URL:", import.meta.env.VITE_API_URL);
-        console.log("Form Data:", { firstName: fname, lastName: lname, email, password });
 
         const trimmedEmail = (email || "").trim();
         if (!trimmedEmail) {
@@ -50,12 +48,10 @@ function Signup() {
 
             const data = await response.json();
 
-
             login({
                 username: data.username || fname || trimmedEmail.split('@')[0],
                 token: data.token
             });
-
 
             navigate('/complete-profile', { replace: true });
         } catch (error) {

@@ -1,10 +1,10 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import auth from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Signup
 router.post('/signup', async (req, res, next) => {
   try {
     const { email, firstName, lastName, password } = req.body;
@@ -47,7 +47,6 @@ router.post('/signup', async (req, res, next) => {
   }
 });
 
-// Login
 router.post('/login', async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -93,17 +92,14 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-// Update user profile (protected route)
 router.put('/profile', async (req, res) => {
   try {
-    // Extract token from Authorization header
     const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {
       return res.status(401).json({ error: { message: 'No token provided' } });
     }
 
-    // Verify token
     let decoded;
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET || 'supersecretkey');
@@ -113,14 +109,12 @@ router.put('/profile', async (req, res) => {
 
     const { firstName, lastName, email, dateOfBirth, gender, bloodGroup, height, weight } = req.body;
 
-    // Find and update user
     const user = await User.findById(decoded.id);
 
     if (!user) {
       return res.status(404).json({ error: { message: 'User not found' } });
     }
 
-    // Update fields
     if (firstName) user.firstName = firstName;
     if (lastName) user.lastName = lastName;
     if (email) user.email = email;
@@ -147,33 +141,14 @@ router.put('/profile', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Profile update error:', error);
     return res.status(500).json({ error: { message: 'Failed to update profile. Please try again.' } });
   }
 });
 
-// GET /profile - Fetch user profile
-// Manually handling auth here since we don't have a global middleware file visible yet
-router.get('/profile', async (req, res) => {
+router.get('/profile', auth, async (req, res, next) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ error: { message: 'No token provided' } });
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'supersecretkey');
-
-    // Mock req.user for the controller function if we were to use it directly, 
-    // OR just reimplement the fetch here to be safe and consistent with the PUT route above.
-    // Given the instructions asked to use a specific controller function, let's try to import it.
-    // But importing from a sibling directory in this file structure might be messy without seeing the full context.
-    // Actually, I can just implement the logic here to match the PUT route style, which is cleaner than cross-importing if not already set up.
-    // BUT the user explicitly asked: "Task: Create a getUserProfile function... Route: Add this to my routes file as GET /api/users/profile."
-
-    // So I should import it.
-    // Let's assume the controller export is named getUserProfile from ../controllers/userController.js
-
-    const user = await User.findById(decoded.id).select('-password');
+    const user = await User.findById(req.user.id).select('-password');
     if (!user) return res.status(404).json({ error: { message: 'User not found' } });
-
     res.json({ data: user });
   } catch (error) {
     res.status(401).json({ error: { message: 'Invalid token' } });
