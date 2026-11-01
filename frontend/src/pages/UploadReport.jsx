@@ -6,6 +6,9 @@ import Button from '../components/Button';
 import './UploadReport.css';
 import axios from 'axios';
 
+const ALLOWED_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png', 'webp'];
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
+
 const UploadReport = () => {
     const [file, setFile] = useState(null);
     const [title, setTitle] = useState('');
@@ -33,7 +36,22 @@ const UploadReport = () => {
     };
 
     const handleFileChange = (e) => {
-        setFile(e.target.files[0]);
+        const selected = e.target.files[0];
+        if (!selected) return;
+
+        // Mirrors the backend limits so users get immediate feedback.
+        const ext = selected.name.split('.').pop().toLowerCase();
+        if (!ALLOWED_EXTENSIONS.includes(ext)) {
+            alert('Only PDF, JPG, PNG or WEBP files are allowed.');
+            e.target.value = '';
+            return;
+        }
+        if (selected.size > MAX_FILE_BYTES) {
+            alert('File is too large (max 10 MB).');
+            e.target.value = '';
+            return;
+        }
+        setFile(selected);
     };
 
     const handleSubmit = async (e) => {
@@ -161,6 +179,7 @@ const UploadReport = () => {
                             <div className="drop-zone" style={{ position: 'relative' }}>
                                 <input
                                     type="file"
+                                    accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp"
                                     onChange={handleFileChange}
                                     style={{
                                         position: 'absolute',
@@ -175,7 +194,7 @@ const UploadReport = () => {
                                         <Upload size={24} />
                                     </div>
                                     <h3>{file ? file.name : "Click or Drag to Upload"}</h3>
-                                    <p>{file ? "File selected" : "Support for images and PDF"}</p>
+                                    <p>{file ? "File selected" : "PDF, JPG, PNG or WEBP — up to 10 MB"}</p>
                                 </div>
                             </div>
                         </div>

@@ -6,6 +6,22 @@ import Button from '../components/Button';
 import axios from 'axios';
 import './ViewReport.css';
 
+const FILE_EXTENSIONS = {
+    'application/pdf': 'pdf',
+    'image/jpeg': 'jpg',
+    'image/png': 'png',
+    'image/webp': 'webp'
+};
+
+// Files are private: the backend checks ownership and returns a link that expires in minutes.
+const fetchFileLink = async (reportId) => {
+    const token = localStorage.getItem('token');
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/reports/${reportId}/file`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    return res.data.data;
+};
+
 const ViewReport = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -13,6 +29,8 @@ const ViewReport = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [downloading, setDownloading] = useState(false);
+    const [fileLink, setFileLink] = useState(null);
+    const [fileError, setFileError] = useState(null);
 
     useEffect(() => {
         const fetchReport = async () => {
@@ -22,6 +40,14 @@ const ViewReport = () => {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 setReport(res.data.data);
+
+                if (res.data.data.file || res.data.data.fileUrl) {
+                    try {
+                        setFileLink(await fetchFileLink(id));
+                    } catch (fileErr) {
+                        setFileError(fileErr.response?.data?.error?.message || 'Could not load the file preview.');
+                    }
+                }
                 setLoading(false);
             } catch (err) {
                 console.error('Error fetching report:', err);
@@ -36,27 +62,32 @@ const ViewReport = () => {
     }, [id]);
 
     const handleDownload = async () => {
-        if (!report?.fileUrl) return;
+        if (!fileLink) return;
         setDownloading(true);
+        let url = fileLink.url;
         try {
+            // Get a fresh link in case the one used for the preview has expired.
+            const link = await fetchFileLink(id);
+            url = link.url;
 
-            const response = await fetch(report.fileUrl);
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`Download failed with status ${response.status}`);
             const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
+            const objectUrl = window.URL.createObjectURL(blob);
 
-            const link = document.createElement('a');
-            link.href = url;
+            const anchor = document.createElement('a');
+            anchor.href = objectUrl;
 
-            const ext = report.fileUrl.split('.').pop().split('?')[0];
-            link.download = `${report.title.replace(/\s+/g, '_')}_${report._id}.${ext}`;
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            window.URL.revokeObjectURL(url);
+            const ext = FILE_EXTENSIONS[link.mimeType] || 'bin';
+            anchor.download = `${report.title.replace(/\s+/g, '_')}_${report._id}.${ext}`;
+            document.body.appendChild(anchor);
+            anchor.click();
+            anchor.remove();
+            window.URL.revokeObjectURL(objectUrl);
         } catch (err) {
             console.error("Download failed:", err);
 
-            window.open(report.fileUrl, '_blank');
+            window.open(url, '_blank', 'noopener');
         } finally {
             setDownloading(false);
         }
@@ -74,7 +105,7 @@ const ViewReport = () => {
             navigate('/reports');
         } catch (err) {
             console.error("Delete failed:", err);
-            alert("Failed to delete report.");
+            alert(err.response?.data?.error?.message || "Failed to delete report.");
         }
     };
 
@@ -82,7 +113,7 @@ const ViewReport = () => {
     if (error) return <div className="p-8 text-center text-red-500" style={{ padding: '2rem', color: 'red' }}>{error}</div>;
     if (!report) return <div className="p-8 text-center" style={{ padding: '2rem' }}>Report not found</div>;
 
-    const isPDF = report.fileUrl?.toLowerCase().endsWith('.pdf');
+    const isPDF = fileLink?.mimeType === 'application/pdf';
 
     return (
         <div className="dashboard-layout">
@@ -217,9 +248,11 @@ const ViewReport = () => {
                                 flex: 1, background: '#f9fafb', borderRadius: '8px', border: '1px dashed #d1d5db',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', padding: '1rem'
                             }}>
-                                {isPDF ? (
+                                {!fileLink ? (
+                                    <p style={{ color: '#6b7280' }}>{fileError || 'No file attached to this report.'}</p>
+                                ) : isPDF ? (
                                     <iframe
-                                        src={report.fileUrl}
+                                        src={fileLink.url}
                                         width="100%"
                                         height="600px"
                                         title="PDF Report"
@@ -227,7 +260,7 @@ const ViewReport = () => {
                                     />
                                 ) : (
                                     <img
-                                        src={report.fileUrl}
+                                        src={fileLink.url}
                                         alt="Report Preview"
                                         style={{ maxWidth: '100%', maxHeight: '600px', objectFit: 'contain', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
                                     />
