@@ -37,7 +37,6 @@ export const notFoundHandler = (req, res) => {
   res.status(404).json({ error: { message: 'Route not found' } });
 };
 
-// eslint-disable-next-line no-unused-vars -- Express identifies error handlers by arity
 export const errorHandler = (err, req, res, next) => {
   const httpError = toHttpError(err);
 

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Search, FlaskConical, FileText, ChevronRight, Plus, Eye, ArrowLeft } from 'lucide-react';
+import { Search, FlaskConical, FileText, Plus, Eye, ArrowLeft } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import Button from '../components/Button';
 import { listReports } from '../services/reportsService';

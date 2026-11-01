@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Upload, Search, Bell, ArrowLeft } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Upload, Search, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Button from '../components/Button';
@@ -22,16 +22,13 @@ const UploadReport = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchDoctors();
-    }, []);
-
-    const fetchDoctors = async () => {
-        try {
-            setDoctors(await listDoctors());
-        } catch {
+        let cancelled = false;
+        listDoctors()
+            .then((list) => { if (!cancelled) setDoctors(list); })
             // The doctor picker is optional; the form still works without it.
-        }
-    };
+            .catch(() => {});
+        return () => { cancelled = true; };
+    }, []);
 
     const handleFileChange = (e) => {
         const selected = e.target.files[0];

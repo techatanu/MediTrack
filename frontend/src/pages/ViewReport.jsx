@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Search, Bell, ArrowLeft, Download, Trash2, FileText, Calendar, Tag } from 'lucide-react';
+import { ArrowLeft, Download, Trash2, FileText, Calendar, Tag } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
-import Button from '../components/Button'; 
 import { getErrorMessage } from '../utils/api';
 import { deleteReport, getReport, getReportFileLink } from '../services/reportsService';
 import './ViewReport.css';

@@ -1,10 +1,13 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { setUnauthorizedHandler } from '../utils/api';
 import { clearSession, loadSession, saveSession } from '../utils/session';
 
 const AuthContext = createContext();
 
+// Co-locating the hook with its provider is the usual React pattern; fast refresh just
+// does a full reload when this file changes.
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

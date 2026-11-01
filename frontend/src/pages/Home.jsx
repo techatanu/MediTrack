@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { Lock, Folder, Smartphone } from 'lucide-react';
 import Navbar from '../components/Navbar';

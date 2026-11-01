@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { getErrorMessage } from '../utils/api';
@@ -27,29 +27,26 @@ const UserProfile = () => {
     });
 
     useEffect(() => {
-        fetchUserProfile();
+        let cancelled = false;
+        authService.getProfile()
+            .then((profile) => {
+                if (cancelled) return;
+                setUser(profile);
+                setFormData({
+                    firstName: profile.firstName || '',
+                    lastName: profile.lastName || '',
+                    email: profile.email || '',
+                    dateOfBirth: profile.dateOfBirth ? new Date(profile.dateOfBirth).toISOString().split('T')[0] : '',
+                    gender: profile.gender || '',
+                    bloodGroup: profile.bloodGroup || '',
+                    height: profile.height || '',
+                    weight: profile.weight || ''
+                });
+            })
+            .catch((err) => { if (!cancelled) setError(getErrorMessage(err, 'Failed to load profile')); })
+            .finally(() => { if (!cancelled) setLoading(false); });
+        return () => { cancelled = true; };
     }, []);
-
-    const fetchUserProfile = async () => {
-        try {
-            const profile = await authService.getProfile();
-            setUser(profile);
-            setFormData({
-                firstName: profile.firstName || '',
-                lastName: profile.lastName || '',
-                email: profile.email || '',
-                dateOfBirth: profile.dateOfBirth ? new Date(profile.dateOfBirth).toISOString().split('T')[0] : '',
-                gender: profile.gender || '',
-                bloodGroup: profile.bloodGroup || '',
-                height: profile.height || '',
-                weight: profile.weight || ''
-            });
-        } catch (err) {
-            setError(getErrorMessage(err, 'Failed to load profile'));
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleLogout = () => {
         logout();

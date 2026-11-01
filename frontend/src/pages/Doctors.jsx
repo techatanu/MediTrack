@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Plus, MapPin, Phone, Stethoscope, Edit2, Trash2, X, ArrowLeft } from 'lucide-react';
 import { getErrorMessage } from '../utils/api';
 import * as doctorsService from '../services/doctorsService';
@@ -25,19 +25,16 @@ const Doctors = () => {
     });
 
 
-    const fetchDoctors = async () => {
-        try {
-            setDoctors(await doctorsService.listDoctors());
-            setLoading(false);
-        } catch {
-            setError('Failed to load doctors.');
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
-        fetchDoctors();
+        let cancelled = false;
+        doctorsService.listDoctors()
+            .then((list) => { if (!cancelled) setDoctors(list); })
+            .catch(() => { if (!cancelled) setError('Failed to load doctors.'); })
+            .finally(() => { if (!cancelled) setLoading(false); });
+        return () => { cancelled = true; };
     }, []);
+
+    const refreshDoctors = async () => setDoctors(await doctorsService.listDoctors());
 
 
     const handleChange = (e) => {
@@ -77,7 +74,7 @@ const Doctors = () => {
                 await doctorsService.createDoctor(formData);
             }
 
-            fetchDoctors();
+            await refreshDoctors();
             closeModal();
         } catch (err) {
             alert(getErrorMessage(err, 'Failed to save doctor. Please try again.'));
@@ -90,7 +87,7 @@ const Doctors = () => {
 
         try {
             await doctorsService.deleteDoctor(id);
-            fetchDoctors();
+            await refreshDoctors();
         } catch (err) {
             alert(getErrorMessage(err, 'Failed to delete doctor.'));
         }
