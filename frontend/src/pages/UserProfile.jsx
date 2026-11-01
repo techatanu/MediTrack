@@ -308,7 +308,7 @@ const ChangePasswordForm = ({ onPasswordChanged }) => {
             }
 
             // The backend revokes all existing tokens, so switch this session to the new one.
-            onPasswordChanged(data.token);
+            onPasswordChanged(data.data.token);
             setForm(emptyPasswordForm);
             setSuccess('Password changed. You have been signed out on other devices.');
         } catch (err) {

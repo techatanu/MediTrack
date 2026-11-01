@@ -50,9 +50,9 @@ function Signup() {
             const data = await response.json();
 
             login({
-                username: data.data?.firstName || fname || trimmedEmail.split('@')[0],
-                firstName: data.data?.firstName || fname,
-                token: data.token
+                username: data.data?.user?.firstName || fname || trimmedEmail.split('@')[0],
+                firstName: data.data?.user?.firstName || fname,
+                token: data.data.token
             });
 
             navigate('/complete-profile', { replace: true });

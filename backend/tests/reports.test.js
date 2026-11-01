@@ -156,7 +156,7 @@ describe('report CRUD', () => {
   test('deletes your own report', async () => {
     const { a } = await setup();
     const res = await request(app).delete(`/api/reports/${a.report._id}`).set(bearer(a.token));
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(204);
     expect(await Report.exists({ _id: a.report._id })).toBeNull();
   });
 

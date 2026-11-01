@@ -6,6 +6,7 @@ import { env } from './config/env.js';
 import userRoutes from './routes/users.js';
 import reportRoutes from './routes/reports.js';
 import doctorRoutes from './routes/doctors.js';
+import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 
 // Defence in depth against query-operator injection: any `$`-key object reaching a
 // filter is treated as a literal value unless wrapped in mongoose.trusted().
@@ -39,45 +40,13 @@ app.use('/api/users', userRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/doctors', doctorRoutes);
 
-app.get('/', (req, res) => {
-  res.json({
-    status: 'OK',
-    message: 'MediTrack Backend is running',
-    timestamp: new Date().toISOString()
-  });
-});
+const health = (req, res) => {
+  res.json({ data: { status: 'ok', timestamp: new Date().toISOString() } });
+};
+app.get('/', health);
+app.get('/api/health', health);
 
-
-app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'OK',
-    message: 'MediTrack API is running',
-    timestamp: new Date().toISOString()
-  });
-});
-
-
-app.use((req, res) => {
-  res.status(404).json({
-    error: { message: 'Route not found' }
-  });
-});
-
-
-// eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
-  const status = err.status || err.statusCode || 500;
-
-  // Log the error type and stack frames only: messages can echo request data
-  // (e.g. a duplicate-key error contains the email), and this is health data.
-  console.error(
-    `[${req.method} ${req.path}] ${err.name}${err.code ? ` (${err.code})` : ''} -> ${status}` +
-      (status >= 500 && err.stack ? `\n${err.stack.split('\n').slice(1, 6).join('\n')}` : '')
-  );
-
-  res.status(status).json({
-    error: { message: status < 500 && err.expose !== false ? err.message : 'Internal Server Error' }
-  });
-});
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 export default app;

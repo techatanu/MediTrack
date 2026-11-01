@@ -1,71 +1,33 @@
 import Doctor from '../models/Doctor.js';
+import HttpError from '../utils/httpError.js';
+import definedOnly from '../utils/definedOnly.js';
 
+const notFound = () => new HttpError(404, 'Doctor not found');
 
-export const createDoctor = async (req, res, next) => {
-    try {
-        const { name, specialization, hospital, phone } = req.valid.body;
-
-        const doctor = await Doctor.create({
-            name,
-            specialization,
-            hospital,
-            phone,
-            user: req.user.id
-        });
-
-        res.status(201).json({ data: doctor });
-    } catch (error) {
-        next(error);
-    }
+export const createDoctor = async (req, res) => {
+  const doctor = await Doctor.create({ ...req.valid.body, user: req.user.id });
+  res.status(201).json({ data: doctor });
 };
 
-
-export const getDoctors = async (req, res, next) => {
-    try {
-        const doctors = await Doctor.find({ user: req.user.id });
-        res.json({ data: doctors });
-    } catch (error) {
-        next(error);
-    }
+export const getDoctors = async (req, res) => {
+  const doctors = await Doctor.find({ user: req.user.id });
+  res.json({ data: doctors });
 };
 
+export const updateDoctor = async (req, res) => {
+  const doctor = await Doctor.findOneAndUpdate(
+    { _id: req.valid.params.id, user: req.user.id },
+    { $set: definedOnly(req.valid.body) },
+    { returnDocument: 'after', runValidators: true }
+  );
+  if (!doctor) throw notFound();
 
-export const updateDoctor = async (req, res, next) => {
-    try {
-        const { id } = req.valid.params;
-        const updates = Object.fromEntries(
-            Object.entries(req.valid.body).filter(([, value]) => value !== undefined)
-        );
-
-        const doctor = await Doctor.findOneAndUpdate(
-            { _id: id, user: req.user.id },
-            { $set: updates },
-            { returnDocument: 'after', runValidators: true }
-        );
-
-        if (!doctor) {
-            return res.status(404).json({ error: { message: 'Doctor not found or unauthorized' } });
-        }
-
-        res.json({ data: doctor });
-    } catch (error) {
-        next(error);
-    }
+  res.json({ data: doctor });
 };
 
+export const deleteDoctor = async (req, res) => {
+  const doctor = await Doctor.findOneAndDelete({ _id: req.valid.params.id, user: req.user.id });
+  if (!doctor) throw notFound();
 
-export const deleteDoctor = async (req, res, next) => {
-    try {
-        const { id } = req.valid.params;
-
-        const doctor = await Doctor.findOneAndDelete({ _id: id, user: req.user.id });
-
-        if (!doctor) {
-            return res.status(404).json({ error: { message: 'Doctor not found or unauthorized' } });
-        }
-
-        res.json({ message: 'Doctor deleted successfully' });
-    } catch (error) {
-        next(error);
-    }
+  res.status(204).end();
 };

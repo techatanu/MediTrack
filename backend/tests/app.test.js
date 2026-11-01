@@ -5,7 +5,7 @@ describe('app hardening', () => {
   test('health check responds', async () => {
     const res = await request(app).get('/api/health');
     expect(res.status).toBe(200);
-    expect(res.body.status).toBe('OK');
+    expect(res.body.data.status).toBe('ok');
   });
 
   test('sets helmet security headers and hides Express', async () => {

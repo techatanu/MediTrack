@@ -185,7 +185,7 @@ describe('DELETE /api/reports/:id', () => {
     const report = await Report.create({ title: 'T', category: 'Lab', reportDate: new Date(), user: user._id, file: storedFile });
 
     const res = await request(app).delete(`/api/reports/${report._id}`).set(bearer(token));
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(204);
     expect(storage.deleteFile).toHaveBeenCalledWith(expect.objectContaining({ publicId: 'meditrack_reports/abc', deliveryType: 'authenticated' }));
     expect(await Report.exists({ _id: report._id })).toBeNull();
   });

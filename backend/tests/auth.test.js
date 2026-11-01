@@ -20,8 +20,8 @@ describe('POST /api/users/signup', () => {
   test('creates a user with a normalised email and returns a token', async () => {
     const res = await signup(newUser);
     expect(res.status).toBe(201);
-    expect(res.body.token).toEqual(expect.any(String));
-    expect(res.body.data.email).toBe('ada@example.com');
+    expect(res.body.data.token).toEqual(expect.any(String));
+    expect(res.body.data.user.email).toBe('ada@example.com');
     expect(JSON.stringify(res.body)).not.toContain('analytical-engine');
 
     const stored = await User.findOne({ email: 'ada@example.com' }).select('+password');
@@ -30,15 +30,16 @@ describe('POST /api/users/signup', () => {
 
   test('token carries no email', async () => {
     const res = await signup(newUser);
-    const payload = jwt.decode(res.body.token);
+    const payload = jwt.decode(res.body.data.token);
     expect(payload).not.toHaveProperty('email');
-    expect(payload.sub).toBe(String(res.body.data.id));
+    expect(payload.sub).toBe(String(res.body.data.user.id));
   });
 
   test('rejects a duplicate email regardless of case with 409', async () => {
     await signup(newUser);
     const res = await signup({ ...newUser, email: 'ADA@example.com' });
     expect(res.status).toBe(409);
+    expect(res.body.error.message).toBe('That email is already in use');
   });
 
   test.each([
@@ -59,7 +60,8 @@ describe('POST /api/users/login', () => {
     const { password } = await createUser({ email: 'grace@example.com' });
     const res = await login({ email: 'Grace@Example.COM', password });
     expect(res.status).toBe(200);
-    expect(res.body.token).toEqual(expect.any(String));
+    expect(res.body.data.token).toEqual(expect.any(String));
+    expect(res.body.data.user).not.toHaveProperty('password');
   });
 
   test('unknown email and wrong password get the identical response', async () => {
@@ -211,7 +213,7 @@ describe('PUT /api/users/profile/password', () => {
     expect(res.status).toBe(200);
 
     expect((await request(app).get('/api/users/profile').set(bearer(token))).status).toBe(401);
-    expect((await request(app).get('/api/users/profile').set(bearer(res.body.token))).status).toBe(200);
+    expect((await request(app).get('/api/users/profile').set(bearer(res.body.data.token))).status).toBe(200);
 
     expect((await login({ email: user.email, password })).status).toBe(401);
     expect((await login({ email: user.email, password: 'brand-new-password' })).status).toBe(200);

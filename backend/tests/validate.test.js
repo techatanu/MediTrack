@@ -2,6 +2,7 @@ import express from 'express';
 import request from 'supertest';
 import { z } from 'zod';
 import validate from '../src/middleware/validate.js';
+import { errorHandler } from '../src/middleware/errorHandler.js';
 
 const app = express();
 app.use(express.json());
@@ -14,6 +15,7 @@ app.post(
   }),
   (req, res) => res.json(req.valid)
 );
+app.use(errorHandler);
 
 describe('validate middleware', () => {
   test('puts parsed, coerced and stripped values on req.valid', async () => {

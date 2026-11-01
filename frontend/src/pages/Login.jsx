@@ -37,9 +37,9 @@ function Login() {
 
 
             login({
-                username: data.data?.firstName || trimmedEmail.split('@')[0],
-                firstName: data.data?.firstName || trimmedEmail.split('@')[0],
-                token: data.token
+                username: data.data?.user?.firstName || trimmedEmail.split('@')[0],
+                firstName: data.data?.user?.firstName || trimmedEmail.split('@')[0],
+                token: data.data.token
             });
 
             navigate('/dashboard', { replace: true });

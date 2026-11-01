@@ -1,4 +1,5 @@
 import multer from 'multer';
+import HttpError from '../utils/httpError.js';
 import { isAllowedDeclaredType, UNSUPPORTED_FILE_MESSAGE } from '../utils/fileType.js';
 
 export const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
@@ -10,7 +11,7 @@ const upload = multer({
   limits: { fileSize: MAX_UPLOAD_BYTES, files: 1, fields: 10, fieldSize: 20 * 1024 },
   fileFilter: (req, file, cb) => {
     if (isAllowedDeclaredType(file.originalname, file.mimetype)) return cb(null, true);
-    cb(Object.assign(new Error(UNSUPPORTED_FILE_MESSAGE), { status: 400 }));
+    cb(new HttpError(400, UNSUPPORTED_FILE_MESSAGE));
   },
 });
 
@@ -22,10 +23,9 @@ const MULTER_ERRORS = {
 
 export const uploadReportFile = (req, res, next) =>
   upload.single('image')(req, res, (err) => {
-    if (!err) return next();
     if (err instanceof multer.MulterError) {
       const [status, message] = MULTER_ERRORS[err.code] || [400, 'Invalid upload'];
-      return res.status(status).json({ error: { message } });
+      return next(new HttpError(status, message));
     }
     next(err);
   });

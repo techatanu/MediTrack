@@ -1,3 +1,5 @@
+import HttpError from '../utils/httpError.js';
+
 // Validates req.params / req.query / req.body against zod schemas.
 // Parsed (coerced, stripped) values go on req.valid — Express 5 makes req.query read-only.
 const validate = (schemas) => (req, res, next) => {
@@ -20,9 +22,7 @@ const validate = (schemas) => (req, res, next) => {
     }
   }
 
-  if (details.length) {
-    return res.status(400).json({ error: { message: 'Validation failed', details } });
-  }
+  if (details.length) throw new HttpError(400, 'Validation failed', details);
 
   req.valid = { ...req.valid, ...valid };
   next();

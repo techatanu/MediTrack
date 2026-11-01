@@ -33,6 +33,14 @@ describe('doctors', () => {
     expect((await Doctor.findById(bDoctor._id)).name).toBe('Dr. House');
   });
 
+  test('deletes your own doctor with 204', async () => {
+    const { user, token } = await createUser();
+    const doctor = await Doctor.create({ ...doctorBody, user: user._id });
+    const res = await request(app).delete(`/api/doctors/${doctor._id}`).set(bearer(token));
+    expect(res.status).toBe(204);
+    expect(await Doctor.exists({ _id: doctor._id })).toBeNull();
+  });
+
   test('partial update leaves other fields intact', async () => {
     const { user, token } = await createUser();
     const doctor = await Doctor.create({ ...doctorBody, user: user._id });
