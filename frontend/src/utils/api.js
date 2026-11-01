@@ -1,16 +1,13 @@
-
 import axios from "axios";
 
-
+// Must match the backend's default PORT (5050). Production builds read .env.production.
 export const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://127.0.0.1:5000/api";
-
+  import.meta.env.VITE_API_URL || "http://localhost:5050/api";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: { "Content-Type": "application/json" },
 });
-
 
 api.interceptors.request.use((cfg) => {
   const token = localStorage.getItem("token");
@@ -18,29 +15,8 @@ api.interceptors.request.use((cfg) => {
   return cfg;
 });
 
-
 // Message from a backend error body: first field-level validation message, else the error message.
 export const apiErrorMessage = (body, fallback = "Request failed") =>
   body?.error?.details?.[0]?.message || body?.error?.message || fallback;
-
-
-export const getErrorMessage = (err, fallback = "Request failed") =>
-  err?.response?.data?.error ||
-  err?.response?.data?.message ||
-  err?.message ||
-  fallback;
-
-
-export const signup = (name, email, password) =>
-  api.post("/auth/signup", { name, email, password });
-
-export const login = (email, password) =>
-  api.post("/auth/login", { email, password });
-
-
-export const registerUser = async (userData) => {
-  const res = await api.post("/signup", userData);
-  return res.data;
-};
 
 export default api;
