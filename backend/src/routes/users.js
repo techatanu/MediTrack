@@ -2,6 +2,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import auth from '../middleware/auth.js';
+import { env } from '../config/env.js';
 
 const router = express.Router();
 
@@ -28,7 +29,7 @@ router.post('/signup', async (req, res, next) => {
 
     const token = jwt.sign(
       { id: user._id, email: user.email },
-      process.env.JWT_SECRET || 'supersecretkey',
+      env.JWT_SECRET,
       { expiresIn: '24h' }
     );
 
@@ -69,7 +70,7 @@ router.post('/login', async (req, res, next) => {
 
     const token = jwt.sign(
       { id: user._id, email: user.email },
-      process.env.JWT_SECRET || 'supersecretkey',
+      env.JWT_SECRET,
       { expiresIn: '24h' }
     );
 
@@ -102,7 +103,7 @@ router.put('/profile', async (req, res) => {
 
     let decoded;
     try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET || 'supersecretkey');
+      decoded = jwt.verify(token, env.JWT_SECRET);
     } catch (err) {
       return res.status(401).json({ error: { message: 'Invalid or expired token' } });
     }
