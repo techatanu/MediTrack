@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { apiErrorMessage } from '../utils/api';
 import './Auth.css';
 
 function Signup() {
@@ -21,8 +22,8 @@ function Signup() {
             setErrorMsg("Please enter a valid email.");
             return;
         }
-        if (!password || password.length < 6) {
-            setErrorMsg("Password must be at least 6 characters.");
+        if (!password || password.length < 8) {
+            setErrorMsg("Password must be at least 8 characters.");
             return;
         }
 
@@ -42,14 +43,15 @@ function Signup() {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                setErrorMsg(errorData.message || 'Signup failed. Please try again.');
+                setErrorMsg(apiErrorMessage(errorData, 'Signup failed. Please try again.'));
                 return;
             }
 
             const data = await response.json();
 
             login({
-                username: data.username || fname || trimmedEmail.split('@')[0],
+                username: data.data?.firstName || fname || trimmedEmail.split('@')[0],
+                firstName: data.data?.firstName || fname,
                 token: data.token
             });
 

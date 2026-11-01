@@ -19,6 +19,11 @@ api.interceptors.request.use((cfg) => {
 });
 
 
+// Message from a backend error body: first field-level validation message, else the error message.
+export const apiErrorMessage = (body, fallback = "Request failed") =>
+  body?.error?.details?.[0]?.message || body?.error?.message || fallback;
+
+
 export const getErrorMessage = (err, fallback = "Request failed") =>
   err?.response?.data?.error ||
   err?.response?.data?.message ||

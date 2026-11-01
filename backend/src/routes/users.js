@@ -1,159 +1,128 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import auth from '../middleware/auth.js';
-import { env } from '../config/env.js';
+import validate from '../middleware/validate.js';
+import { loginLimiter, signupLimiter, passwordCheckLimiter } from '../middleware/rateLimit.js';
+import { signToken } from '../utils/token.js';
+import {
+  signupSchema,
+  loginSchema,
+  updateProfileSchema,
+  changePasswordSchema,
+} from '../schemas/userSchemas.js';
 
 const router = express.Router();
 
-router.post('/signup', async (req, res, next) => {
+const INVALID_CREDENTIALS = 'Invalid email or password';
+// Compared against when the email is unknown, so both failure paths take the same time.
+const DUMMY_HASH = bcrypt.hashSync('timing-equalizer', 10);
+
+const isDuplicateKey = (err) => err?.code === 11000;
+const emailTaken = (res) =>
+  res.status(409).json({ error: { message: 'An account with this email already exists' } });
+
+router.post('/signup', signupLimiter, validate({ body: signupSchema }), async (req, res) => {
+  const { email, firstName, lastName, password } = req.valid.body;
+
+  let user;
   try {
-    const { email, firstName, lastName, password } = req.body;
-
-    if (!email || !firstName || !password) {
-      return res.status(400).json({ error: { message: 'Email, firstName, and password are required' } });
-    }
-
-    const userExists = await User.findOne({ email });
-
-    if (userExists) {
-      return res.status(400).json({ error: { message: 'User already exists' } });
-    }
-
-    const user = await User.create({
-      email,
-      firstName,
-      lastName,
-      password
-    });
-
-    const token = jwt.sign(
-      { id: user._id, email: user.email },
-      env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-
-    res.status(201).json({
-      message: 'User created successfully',
-      data: {
-        id: user._id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName
-      },
-      token
-    });
-  } catch (error) {
-    next(error);
+    user = await User.create({ email, firstName, lastName, password });
+  } catch (err) {
+    if (isDuplicateKey(err)) return emailTaken(res);
+    throw err;
   }
+
+  res.status(201).json({
+    message: 'User created successfully',
+    data: { id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName },
+    token: signToken(user),
+  });
 });
 
-router.post('/login', async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
+router.post('/login', loginLimiter, validate({ body: loginSchema }), async (req, res) => {
+  const { email, password } = req.valid.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ error: { message: 'Email and password are required' } });
-    }
+  const user = await User.findOne({ email }).select('+password');
+  const passwordOk = await bcrypt.compare(password, user ? user.password : DUMMY_HASH);
 
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(404).json({ error: { message: 'User not found' } });
-    }
-
-    const isPasswordValid = await user.matchPassword(password);
-
-    if (!isPasswordValid) {
-      return res.status(401).json({ error: { message: 'Invalid password' } });
-    }
-
-    const token = jwt.sign(
-      { id: user._id, email: user.email },
-      env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-
-    res.json({
-      message: 'Login successful',
-      data: { id: user._id, email: user.email, firstName: user.firstName },
-      token
-    });
-  } catch (error) {
-    next(error);
+  if (!user || !passwordOk) {
+    return res.status(401).json({ error: { message: INVALID_CREDENTIALS } });
   }
+
+  res.json({
+    message: 'Login successful',
+    data: { id: user._id, email: user.email, firstName: user.firstName },
+    token: signToken(user),
+  });
 });
 
-router.get('/', async (req, res, next) => {
-  try {
-    const users = await User.find().select('-password');
-    res.json({ data: users });
-  } catch (error) {
-    next(error);
-  }
+router.get('/profile', auth, async (req, res) => {
+  const user = await User.findById(req.user.id);
+  if (!user) return res.status(404).json({ error: { message: 'User not found' } });
+  res.json({ data: user.toProfile() });
 });
 
-router.put('/profile', async (req, res) => {
-  try {
-    const token = req.headers.authorization?.split(' ')[1];
+router.put(
+  '/profile',
+  auth,
+  passwordCheckLimiter,
+  validate({ body: updateProfileSchema }),
+  async (req, res) => {
+    const { email, currentPassword, ...fields } = req.valid.body;
 
-    if (!token) {
-      return res.status(401).json({ error: { message: 'No token provided' } });
+    const user = await User.findById(req.user.id).select('+password');
+    if (!user) return res.status(404).json({ error: { message: 'User not found' } });
+
+    if (email && email !== user.email) {
+      if (!currentPassword) {
+        return res
+          .status(400)
+          .json({ error: { message: 'Current password is required to change your email' } });
+      }
+      if (!(await user.matchPassword(currentPassword))) {
+        return res.status(403).json({ error: { message: 'Current password is incorrect' } });
+      }
+      if (await User.exists({ email, _id: { $ne: user._id } })) return emailTaken(res);
+      user.email = email;
     }
 
-    let decoded;
+    for (const [key, value] of Object.entries(fields)) {
+      if (value !== undefined) user[key] = value;
+    }
+
     try {
-      decoded = jwt.verify(token, env.JWT_SECRET);
+      await user.save();
     } catch (err) {
-      return res.status(401).json({ error: { message: 'Invalid or expired token' } });
+      if (isDuplicateKey(err)) return emailTaken(res);
+      throw err;
     }
 
-    const { firstName, lastName, email, dateOfBirth, gender, bloodGroup, height, weight } = req.body;
+    res.json({ message: 'Profile updated successfully', data: user.toProfile() });
+  }
+);
 
-    const user = await User.findById(decoded.id);
+router.put(
+  '/profile/password',
+  auth,
+  passwordCheckLimiter,
+  validate({ body: changePasswordSchema }),
+  async (req, res) => {
+    const { currentPassword, newPassword } = req.valid.body;
 
-    if (!user) {
-      return res.status(404).json({ error: { message: 'User not found' } });
+    const user = await User.findById(req.user.id).select('+password');
+    if (!user) return res.status(404).json({ error: { message: 'User not found' } });
+
+    if (!(await user.matchPassword(currentPassword))) {
+      return res.status(403).json({ error: { message: 'Current password is incorrect' } });
     }
 
-    if (firstName) user.firstName = firstName;
-    if (lastName) user.lastName = lastName;
-    if (email) user.email = email;
-    if (dateOfBirth) user.dateOfBirth = dateOfBirth;
-    if (gender) user.gender = gender;
-    if (bloodGroup) user.bloodGroup = bloodGroup;
-    if (height) user.height = height;
-    if (weight) user.weight = weight;
-
+    user.password = newPassword;
+    user.tokenVersion += 1; // logs out every other session
     await user.save();
 
-    res.json({
-      message: 'Profile updated successfully',
-      data: {
-        id: user._id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        dateOfBirth: user.dateOfBirth,
-        gender: user.gender,
-        bloodGroup: user.bloodGroup,
-        height: user.height,
-        weight: user.weight
-      }
-    });
-  } catch (error) {
-    return res.status(500).json({ error: { message: 'Failed to update profile. Please try again.' } });
+    res.json({ message: 'Password changed successfully', token: signToken(user) });
   }
-});
-
-router.get('/profile', auth, async (req, res, next) => {
-  try {
-    const user = await User.findById(req.user.id).select('-password');
-    if (!user) return res.status(404).json({ error: { message: 'User not found' } });
-    res.json({ data: user });
-  } catch (error) {
-    res.status(401).json({ error: { message: 'Invalid token' } });
-  }
-});
+);
 
 export default router;

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { apiErrorMessage } from '../utils/api';
 import './Auth.css';
 
 function Login() {
@@ -30,7 +31,7 @@ function Login() {
             });
             const data = await response.json();
             if (!response.ok) {
-                setLoginError(data?.message || 'Login failed');
+                setLoginError(apiErrorMessage(data, 'Login failed'));
                 return;
             }
 

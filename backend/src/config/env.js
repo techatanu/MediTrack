@@ -8,6 +8,9 @@ const required = z.string().trim().min(1, 'is missing');
 const envSchema = z.object({
   NODE_ENV: z.string().default('development'),
   PORT: z.coerce.number().int().positive().default(5050),
+  // Number of reverse proxies in front of the app (Render has one). Needed so rate
+  // limiting sees the client's IP rather than the proxy's.
+  TRUST_PROXY: z.coerce.number().int().min(0).default(1),
   MONGO_URI: required,
   JWT_SECRET: required.min(32, 'must be at least 32 characters'),
   CLOUDINARY_CLOUD_NAME: required,

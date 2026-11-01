@@ -7,6 +7,7 @@ import reportRoutes from './routes/reports.js';
 import doctorRoutes from './routes/doctors.js';
 
 const app = express();
+app.set('trust proxy', env.TRUST_PROXY);
 
 const allowedOrigins = new Set(['http://localhost:5173', env.FRONTEND_URL].filter(Boolean));
 const previewOrigin = new RegExp(env.CORS_PREVIEW_ORIGIN_REGEX);

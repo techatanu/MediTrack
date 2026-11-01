@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { User, Mail, Calendar, Activity, Ruler, Weight, LogOut, Save, Edit2 } from 'lucide-react';
+import { apiErrorMessage } from '../utils/api';
+import { User, Mail, Calendar, Activity, Ruler, Weight, LogOut, Save, Edit2, Lock } from 'lucide-react';
 import './UserProfile.css';
 
 const UserProfile = () => {
-    const { logout } = useAuth();
+    const { user: authUser, login, logout } = useAuth();
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -256,8 +257,128 @@ const UserProfile = () => {
                             </div>
                         </form>
                     )}
+
+                    <ChangePasswordForm
+                        onPasswordChanged={(token) => login({ ...authUser, token })}
+                    />
                 </div>
             </div>
+        </div>
+    );
+};
+
+const emptyPasswordForm = { currentPassword: '', newPassword: '', confirmPassword: '' };
+
+const ChangePasswordForm = ({ onPasswordChanged }) => {
+    const [form, setForm] = useState(emptyPasswordForm);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const [saving, setSaving] = useState(false);
+
+    const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setSuccess('');
+
+        if (form.newPassword !== form.confirmPassword) {
+            setError('New passwords do not match');
+            return;
+        }
+
+        setSaving(true);
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/users/profile/password`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    currentPassword: form.currentPassword,
+                    newPassword: form.newPassword
+                })
+            });
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(apiErrorMessage(data, 'Could not change password'));
+            }
+
+            // The backend revokes all existing tokens, so switch this session to the new one.
+            onPasswordChanged(data.token);
+            setForm(emptyPasswordForm);
+            setSuccess('Password changed. You have been signed out on other devices.');
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    return (
+        <div className="password-section">
+            <div className="section-header">
+                <h2 className="section-title">Change Password</h2>
+            </div>
+
+            {error && (
+                <div className="error-message">
+                    <span>{error}</span>
+                </div>
+            )}
+            {success && (
+                <div className="success-message">
+                    <span>{success}</span>
+                </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="edit-form">
+                <div className="form-group">
+                    <label>Current Password</label>
+                    <input
+                        type="password"
+                        name="currentPassword"
+                        autoComplete="current-password"
+                        required
+                        value={form.currentPassword}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="form-group">
+                    <label>New Password</label>
+                    <input
+                        type="password"
+                        name="newPassword"
+                        autoComplete="new-password"
+                        minLength={8}
+                        required
+                        value={form.newPassword}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Confirm New Password</label>
+                    <input
+                        type="password"
+                        name="confirmPassword"
+                        autoComplete="new-password"
+                        minLength={8}
+                        required
+                        value={form.confirmPassword}
+                        onChange={handleChange}
+                    />
+                </div>
+
+                <div className="form-actions">
+                    <button type="submit" disabled={saving} className="btn-save">
+                        <Lock size={18} />
+                        {saving ? 'Changing...' : 'Change Password'}
+                    </button>
+                </div>
+            </form>
         </div>
     );
 };

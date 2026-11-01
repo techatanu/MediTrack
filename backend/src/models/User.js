@@ -12,11 +12,19 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        lowercase: true,
+        trim: true
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        select: false // only loaded explicitly via .select('+password')
+    },
+    // Embedded in every JWT; bumping it (e.g. on password change) invalidates existing tokens.
+    tokenVersion: {
+        type: Number,
+        default: 0
     },
 
     dateOfBirth: {
@@ -49,6 +57,21 @@ const userSchema = new mongoose.Schema({
 
 userSchema.methods.matchPassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
+};
+
+userSchema.methods.toProfile = function () {
+    return {
+        id: this._id,
+        email: this.email,
+        firstName: this.firstName,
+        lastName: this.lastName,
+        dateOfBirth: this.dateOfBirth,
+        gender: this.gender,
+        bloodGroup: this.bloodGroup,
+        height: this.height,
+        weight: this.weight,
+        createdAt: this.createdAt
+    };
 };
 
 
