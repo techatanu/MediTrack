@@ -3,7 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Search, FlaskConical, FileText, ChevronRight, Plus, Eye, ArrowLeft } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import Button from '../components/Button';
-import axios from 'axios';
+import { listReports } from '../services/reportsService';
 import './Dashboard.css';
 
 const Reports = () => {
@@ -17,16 +17,10 @@ const Reports = () => {
     useEffect(() => {
         const fetchReports = async () => {
             try {
-                const token = localStorage.getItem('token');
-
-                const query = `?limit=50${searchTerm ? `&search=${encodeURIComponent(searchTerm)}` : ''}`;
-                const res = await axios.get(`${import.meta.env.VITE_API_URL}/reports${query}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                setReports(res.data.data);
+                const { reports } = await listReports({ limit: 50, search: searchTerm || undefined });
+                setReports(reports);
                 setLoading(false);
-            } catch (err) {
-                console.error("Error fetching reports:", err);
+            } catch {
                 setError('Failed to load reports.');
                 setLoading(false);
             }

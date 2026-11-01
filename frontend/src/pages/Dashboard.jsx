@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, User, BarChart2, Clock, Phone, FlaskConical, FileText, ChevronRight, Plus, Stethoscope } from 'lucide-react';
-import axios from 'axios';
+import { listReports } from '../services/reportsService';
+import { listDoctors } from '../services/doctorsService';
 import { useAuth } from '../contexts/AuthContext';
 import Sidebar from '../components/Sidebar';
 import Button from '../components/Button';
@@ -20,20 +21,16 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const headers = { Authorization: `Bearer ${token}` };
-
-        const [reportsRes, doctorsRes] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_API_URL}/reports`, { headers }),
-          axios.get(`${import.meta.env.VITE_API_URL}/doctors`, { headers })
+        const [{ reports: recentReports, pagination }, doctors] = await Promise.all([
+          listReports(),
+          listDoctors()
         ]);
 
-        setReports(reportsRes.data.data);
-        setReportsTotal(reportsRes.data.pagination.total);
-        setDoctorsCount(doctorsRes.data.data.length);
+        setReports(recentReports);
+        setReportsTotal(pagination.total);
+        setDoctorsCount(doctors.length);
         setLoading(false);
-      } catch (err) {
-        console.error("Error fetching dashboard data:", err);
+      } catch {
         setError('Failed to load dashboard data.');
         setLoading(false);
       }

@@ -1,5 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import { useAuth } from './contexts/AuthContext'
+import { Routes, Route } from 'react-router-dom'
 import ProtectedRoute from './components/ProtectedRoute'
 import PublicRoute from './components/PublicRoute'
 import Home from './pages/Home'
@@ -15,8 +14,6 @@ import CompleteProfile from './pages/CompleteProfile'
 import UserProfile from './pages/UserProfile'
 
 function App() {
-  const { isAuthenticated } = useAuth();
-
   return (
     <Routes>
 

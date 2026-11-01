@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Search, Bell, ArrowLeft, Download, Trash2, FileText, Calendar, Tag } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import Button from '../components/Button'; 
-import axios from 'axios';
+import { getErrorMessage } from '../utils/api';
+import { deleteReport, getReport, getReportFileLink } from '../services/reportsService';
 import './ViewReport.css';
 
 const FILE_EXTENSIONS = {
@@ -11,15 +12,6 @@ const FILE_EXTENSIONS = {
     'image/jpeg': 'jpg',
     'image/png': 'png',
     'image/webp': 'webp'
-};
-
-// Files are private: the backend checks ownership and returns a link that expires in minutes.
-const fetchFileLink = async (reportId) => {
-    const token = localStorage.getItem('token');
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}/reports/${reportId}/file`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-    });
-    return res.data.data;
 };
 
 const ViewReport = () => {
@@ -35,23 +27,20 @@ const ViewReport = () => {
     useEffect(() => {
         const fetchReport = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const res = await axios.get(`${import.meta.env.VITE_API_URL}/reports/${id}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                setReport(res.data.data);
+                const loaded = await getReport(id);
+                setReport(loaded);
 
-                if (res.data.data.file || res.data.data.fileUrl) {
+                // Files are private: the backend checks ownership and returns a link that expires in minutes.
+                if (loaded.file || loaded.fileUrl) {
                     try {
-                        setFileLink(await fetchFileLink(id));
+                        setFileLink(await getReportFileLink(id));
                     } catch (fileErr) {
-                        setFileError(fileErr.response?.data?.error?.message || 'Could not load the file preview.');
+                        setFileError(getErrorMessage(fileErr, 'Could not load the file preview.'));
                     }
                 }
                 setLoading(false);
             } catch (err) {
-                console.error('Error fetching report:', err);
-                setError(err.response?.data?.error?.message || 'Failed to load report');
+                setError(getErrorMessage(err, 'Failed to load report'));
                 setLoading(false);
             }
         };
@@ -67,7 +56,7 @@ const ViewReport = () => {
         let url = fileLink.url;
         try {
             // Get a fresh link in case the one used for the preview has expired.
-            const link = await fetchFileLink(id);
+            const link = await getReportFileLink(id);
             url = link.url;
 
             const response = await fetch(url);
@@ -84,9 +73,7 @@ const ViewReport = () => {
             anchor.click();
             anchor.remove();
             window.URL.revokeObjectURL(objectUrl);
-        } catch (err) {
-            console.error("Download failed:", err);
-
+        } catch {
             window.open(url, '_blank', 'noopener');
         } finally {
             setDownloading(false);
@@ -97,15 +84,10 @@ const ViewReport = () => {
         if (!window.confirm("Are you sure you want to delete this report? This action cannot be undone.")) return;
 
         try {
-            const token = localStorage.getItem('token');
-            await axios.delete(`${import.meta.env.VITE_API_URL}/reports/${id}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-
+            await deleteReport(id);
             navigate('/reports');
         } catch (err) {
-            console.error("Delete failed:", err);
-            alert(err.response?.data?.error?.message || "Failed to delete report.");
+            alert(getErrorMessage(err, 'Failed to delete report.'));
         }
     };
 

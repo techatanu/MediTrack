@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { apiErrorMessage } from '../utils/api';
+import { getErrorMessage } from '../utils/api';
+import * as authService from '../services/authService';
 import './Auth.css';
 
 function Login() {
@@ -22,29 +23,10 @@ function Login() {
         }
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/users/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email: trimmedEmail, password })
-            });
-            const data = await response.json();
-            if (!response.ok) {
-                setLoginError(apiErrorMessage(data, 'Login failed'));
-                return;
-            }
-
-
-            login({
-                username: data.data?.user?.firstName || trimmedEmail.split('@')[0],
-                firstName: data.data?.user?.firstName || trimmedEmail.split('@')[0],
-                token: data.data.token
-            });
-
+            login(await authService.login(trimmedEmail, password));
             navigate('/dashboard', { replace: true });
         } catch (err) {
-            setLoginError('Network error. Please try again.');
+            setLoginError(getErrorMessage(err, 'Login failed'));
         }
     }
 

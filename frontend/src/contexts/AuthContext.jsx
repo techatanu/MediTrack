@@ -1,4 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { setUnauthorizedHandler } from '../utils/api';
+import { clearSession, loadSession, saveSession } from '../utils/session';
 
 const AuthContext = createContext();
 
@@ -11,41 +14,47 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // Read synchronously so protected routes don't redirect before the session loads.
+  const [session, setSession] = useState(loadSession);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const username = localStorage.getItem('username');
-    const firstName = localStorage.getItem('firstName');
-
-    if (token) {
-      setUser({ username, firstName, token });
-    }
-    setLoading(false);
+  // Takes the { user, token } returned by authService.login / signup.
+  const login = useCallback(({ user, token }) => {
+    const next = { token, firstName: user?.firstName || '' };
+    saveSession(next);
+    setSession(next);
   }, []);
 
-  const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem('token', userData.token);
-    if (userData.username) localStorage.setItem('username', userData.username);
-    if (userData.firstName) localStorage.setItem('firstName', userData.firstName);
-  };
+  // Partial update: { token } after a password change (old tokens are revoked),
+  // { firstName } after a profile edit.
+  const updateSession = useCallback((changes) => {
+    setSession((prev) => {
+      const next = { ...prev, ...changes };
+      saveSession(next);
+      return next;
+    });
+  }, []);
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
-    localStorage.removeItem('firstName');
-  };
+  const logout = useCallback(() => {
+    clearSession();
+    setSession(null);
+  }, []);
 
-  const value = {
-    user,
+  useEffect(() => {
+    setUnauthorizedHandler(() => {
+      logout();
+      navigate('/login', { replace: true });
+    });
+    return () => setUnauthorizedHandler(null);
+  }, [logout, navigate]);
+
+  const value = useMemo(() => ({
+    user: session ? { firstName: session.firstName } : null,
+    isAuthenticated: Boolean(session),
     login,
-    logout,
-    isAuthenticated: !!user,
-    loading
-  };
+    updateSession,
+    logout
+  }), [session, login, updateSession, logout]);
 
   return (
     <AuthContext.Provider value={value}>

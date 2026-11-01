@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, MapPin, Phone, Stethoscope, Edit2, Trash2, X, ArrowLeft } from 'lucide-react';
-import axios from 'axios';
+import { getErrorMessage } from '../utils/api';
+import * as doctorsService from '../services/doctorsService';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Button from '../components/Button';
@@ -26,14 +27,9 @@ const Doctors = () => {
 
     const fetchDoctors = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.get(`${import.meta.env.VITE_API_URL}/doctors`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            setDoctors(res.data.data);
+            setDoctors(await doctorsService.listDoctors());
             setLoading(false);
-        } catch (err) {
-            console.error("Error fetching doctors:", err);
+        } catch {
             setError('Failed to load doctors.');
             setLoading(false);
         }
@@ -75,23 +71,16 @@ const Doctors = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
-            const config = { headers: { 'Authorization': `Bearer ${token}` } };
-
             if (currentDoctor) {
-
-                await axios.put(`${import.meta.env.VITE_API_URL}/doctors/${currentDoctor._id}`, formData, config);
+                await doctorsService.updateDoctor(currentDoctor._id, formData);
             } else {
-
-                await axios.post(`${import.meta.env.VITE_API_URL}/doctors`, formData, config);
+                await doctorsService.createDoctor(formData);
             }
-
 
             fetchDoctors();
             closeModal();
         } catch (err) {
-            console.error("Error saving doctor:", err);
-            alert("Failed to save doctor. Please try again.");
+            alert(getErrorMessage(err, 'Failed to save doctor. Please try again.'));
         }
     };
 
@@ -100,14 +89,10 @@ const Doctors = () => {
         if (!window.confirm("Are you sure you want to delete this doctor?")) return;
 
         try {
-            const token = localStorage.getItem('token');
-            await axios.delete(`${import.meta.env.VITE_API_URL}/doctors/${id}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            await doctorsService.deleteDoctor(id);
             fetchDoctors();
         } catch (err) {
-            console.error("Error deleting doctor:", err);
-            alert("Failed to delete doctor.");
+            alert(getErrorMessage(err, 'Failed to delete doctor.'));
         }
     };
 

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { apiErrorMessage } from '../utils/api';
+import { getErrorMessage } from '../utils/api';
+import * as authService from '../services/authService';
 import { User, Mail, Calendar, Activity, Ruler, Weight, LogOut, Save, Edit2, Lock } from 'lucide-react';
 import './UserProfile.css';
 
 const UserProfile = () => {
-    const { user: authUser, login, logout } = useAuth();
+    const { updateSession, logout } = useAuth();
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -31,34 +32,20 @@ const UserProfile = () => {
 
     const fetchUserProfile = async () => {
         try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                navigate('/login');
-                return;
-            }
-
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/users/profile`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (!response.ok) throw new Error('Failed to fetch profile');
-
-            const data = await response.json();
-            setUser(data.data);
+            const profile = await authService.getProfile();
+            setUser(profile);
             setFormData({
-                firstName: data.data.firstName || '',
-                lastName: data.data.lastName || '',
-                email: data.data.email || '',
-                dateOfBirth: data.data.dateOfBirth ? new Date(data.data.dateOfBirth).toISOString().split('T')[0] : '',
-                gender: data.data.gender || '',
-                bloodGroup: data.data.bloodGroup || '',
-                height: data.data.height || '',
-                weight: data.data.weight || ''
+                firstName: profile.firstName || '',
+                lastName: profile.lastName || '',
+                email: profile.email || '',
+                dateOfBirth: profile.dateOfBirth ? new Date(profile.dateOfBirth).toISOString().split('T')[0] : '',
+                gender: profile.gender || '',
+                bloodGroup: profile.bloodGroup || '',
+                height: profile.height || '',
+                weight: profile.weight || ''
             });
         } catch (err) {
-            setError(err.message);
+            setError(getErrorMessage(err, 'Failed to load profile'));
         } finally {
             setLoading(false);
         }
@@ -75,33 +62,19 @@ const UserProfile = () => {
         setError('');
 
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/users/profile`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    ...formData,
-                    gender: formData.gender || undefined,
-                    bloodGroup: formData.bloodGroup || undefined,
-                    dateOfBirth: formData.dateOfBirth || undefined,
-                    height: formData.height ? Number(formData.height) : undefined,
-                    weight: formData.weight ? Number(formData.weight) : undefined
-                })
+            const updated = await authService.updateProfile({
+                ...formData,
+                gender: formData.gender || undefined,
+                bloodGroup: formData.bloodGroup || undefined,
+                dateOfBirth: formData.dateOfBirth || undefined,
+                height: formData.height ? Number(formData.height) : undefined,
+                weight: formData.weight ? Number(formData.weight) : undefined
             });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error?.message || 'Update failed');
-            }
-
-            const data = await response.json();
-            setUser(data.data);
+            setUser(updated);
+            updateSession({ firstName: updated.firstName });
             setIsEditing(false);
         } catch (err) {
-            setError(err.message);
+            setError(getErrorMessage(err, 'Update failed'));
         } finally {
             setLoading(false);
         }
@@ -259,7 +232,7 @@ const UserProfile = () => {
                     )}
 
                     <ChangePasswordForm
-                        onPasswordChanged={(token) => login({ ...authUser, token })}
+                        onPasswordChanged={(token) => updateSession({ token })}
                     />
                 </div>
             </div>
@@ -289,30 +262,13 @@ const ChangePasswordForm = ({ onPasswordChanged }) => {
 
         setSaving(true);
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/users/profile/password`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    currentPassword: form.currentPassword,
-                    newPassword: form.newPassword
-                })
-            });
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(apiErrorMessage(data, 'Could not change password'));
-            }
-
+            const { token } = await authService.changePassword(form.currentPassword, form.newPassword);
             // The backend revokes all existing tokens, so switch this session to the new one.
-            onPasswordChanged(data.data.token);
+            onPasswordChanged(token);
             setForm(emptyPasswordForm);
             setSuccess('Password changed. You have been signed out on other devices.');
         } catch (err) {
-            setError(err.message);
+            setError(getErrorMessage(err, 'Could not change password'));
         } finally {
             setSaving(false);
         }

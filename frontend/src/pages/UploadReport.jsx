@@ -4,7 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Button from '../components/Button';
 import './UploadReport.css';
-import axios from 'axios';
+import { getErrorMessage } from '../utils/api';
+import { createReport } from '../services/reportsService';
+import { listDoctors } from '../services/doctorsService';
 
 const ALLOWED_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png', 'webp'];
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
@@ -25,13 +27,9 @@ const UploadReport = () => {
 
     const fetchDoctors = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.get(`${import.meta.env.VITE_API_URL}/doctors`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            setDoctors(res.data.data);
-        } catch (err) {
-            console.error('Error fetching doctors:', err);
+            setDoctors(await listDoctors());
+        } catch {
+            // The doctor picker is optional; the form still works without it.
         }
     };
 
@@ -63,24 +61,8 @@ const UploadReport = () => {
         }
         setLoading(true);
 
-        const formData = new FormData();
-        formData.append('title', title);
-        formData.append('category', category);
-        formData.append('reportDate', date); 
-        formData.append('image', file);
-        if (doctorId) {
-            formData.append('doctor', doctorId);
-        }
-
         try {
-            const token = localStorage.getItem('token');
-
-            const res = await axios.post(`${import.meta.env.VITE_API_URL}/reports`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+            await createReport({ title, category, reportDate: date, doctor: doctorId, file });
 
             alert('Report uploaded successfully!');
 
@@ -90,8 +72,7 @@ const UploadReport = () => {
             setDoctorId('');
             setFile(null);
         } catch (err) {
-            console.error(err);
-            alert(err.response?.data?.error?.message || 'Upload failed');
+            alert(getErrorMessage(err, 'Upload failed'));
         } finally {
             setLoading(false);
         }

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { apiErrorMessage } from '../utils/api';
+import { getErrorMessage } from '../utils/api';
+import * as authService from '../services/authService';
 import './Auth.css';
 
 function Signup() {
@@ -28,37 +29,15 @@ function Signup() {
         }
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/users/signup`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    firstName: fname,
-                    lastName: lname,
-                    email: trimmedEmail,
-                    password: password
-                }),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                setErrorMsg(apiErrorMessage(errorData, 'Signup failed. Please try again.'));
-                return;
-            }
-
-            const data = await response.json();
-
-            login({
-                username: data.data?.user?.firstName || fname || trimmedEmail.split('@')[0],
-                firstName: data.data?.user?.firstName || fname,
-                token: data.data.token
-            });
-
+            login(await authService.signup({
+                firstName: fname,
+                lastName: lname,
+                email: trimmedEmail,
+                password
+            }));
             navigate('/complete-profile', { replace: true });
-        } catch (error) {
-            console.error("Signup Error:", error);
-            setErrorMsg('An error occurred. Please try again later.');
+        } catch (err) {
+            setErrorMsg(getErrorMessage(err, 'Signup failed. Please try again.'));
         }
     };
 

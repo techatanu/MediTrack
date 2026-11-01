@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getErrorMessage } from '../utils/api';
+import { updateProfile } from '../services/authService';
 import './Auth.css';
 
 function CompleteProfile() {
@@ -18,41 +20,16 @@ function CompleteProfile() {
         setLoading(true);
 
         try {
-            const token = localStorage.getItem('token');
-
-            if (!token) {
-                setErrorMsg('Authentication required. Please login again.');
-                navigate('/login');
-                return;
-            }
-
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/users/profile`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    dateOfBirth: dateOfBirth || undefined,
-                    gender: gender || undefined,
-                    bloodGroup: bloodGroup || undefined,
-                    height: height ? parseFloat(height) : undefined,
-                    weight: weight ? parseFloat(weight) : undefined
-                }),
+            await updateProfile({
+                dateOfBirth: dateOfBirth || undefined,
+                gender: gender || undefined,
+                bloodGroup: bloodGroup || undefined,
+                height: height ? parseFloat(height) : undefined,
+                weight: weight ? parseFloat(weight) : undefined
             });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                setErrorMsg(errorData.error?.message || 'Failed to update profile. Please try again.');
-                setLoading(false);
-                return;
-            }
-
-            // Success - redirect to dashboard
             navigate('/dashboard', { replace: true });
-        } catch (error) {
-            console.error('Profile update error:', error);
-            setErrorMsg('An error occurred. Please try again later.');
+        } catch (err) {
+            setErrorMsg(getErrorMessage(err, 'Failed to update profile. Please try again.'));
             setLoading(false);
         }
     };
