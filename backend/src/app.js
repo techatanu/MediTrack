@@ -1,10 +1,15 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import cors from 'cors';
 import helmet from 'helmet';
 import { env } from './config/env.js';
 import userRoutes from './routes/users.js';
 import reportRoutes from './routes/reports.js';
 import doctorRoutes from './routes/doctors.js';
+
+// Defence in depth against query-operator injection: any `$`-key object reaching a
+// filter is treated as a literal value unless wrapped in mongoose.trusted().
+mongoose.set('sanitizeFilter', true);
 
 const app = express();
 app.set('trust proxy', env.TRUST_PROXY);

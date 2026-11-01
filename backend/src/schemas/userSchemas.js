@@ -1,10 +1,7 @@
 import { z } from 'zod';
+import { optionalField } from './common.js';
 
 const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
-
-// Forms send '' for untouched optional fields; treat '' and null as "not provided".
-const optionalField = (schema) =>
-  z.preprocess((v) => (v === '' || v === null ? undefined : v), schema.optional());
 
 const email = z
   .string()

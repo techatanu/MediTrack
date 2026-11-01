@@ -3,9 +3,7 @@ import Doctor from '../models/Doctor.js';
 
 export const createDoctor = async (req, res, next) => {
     try {
-        const { name, specialization, hospital, phone } = req.body;
-
-        
+        const { name, specialization, hospital, phone } = req.valid.body;
 
         const doctor = await Doctor.create({
             name,
@@ -34,13 +32,15 @@ export const getDoctors = async (req, res, next) => {
 
 export const updateDoctor = async (req, res, next) => {
     try {
-        const { id } = req.params;
-        const { name, specialization, hospital, phone } = req.body;
+        const { id } = req.valid.params;
+        const updates = Object.fromEntries(
+            Object.entries(req.valid.body).filter(([, value]) => value !== undefined)
+        );
 
         const doctor = await Doctor.findOneAndUpdate(
             { _id: id, user: req.user.id },
-            { name, specialization, hospital, phone },
-            { new: true, runValidators: true }
+            { $set: updates },
+            { returnDocument: 'after', runValidators: true }
         );
 
         if (!doctor) {
@@ -56,7 +56,7 @@ export const updateDoctor = async (req, res, next) => {
 
 export const deleteDoctor = async (req, res, next) => {
     try {
-        const { id } = req.params;
+        const { id } = req.valid.params;
 
         const doctor = await Doctor.findOneAndDelete({ _id: id, user: req.user.id });
 

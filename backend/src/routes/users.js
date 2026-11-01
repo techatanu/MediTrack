@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import auth from '../middleware/auth.js';
@@ -83,7 +84,7 @@ router.put(
       if (!(await user.matchPassword(currentPassword))) {
         return res.status(403).json({ error: { message: 'Current password is incorrect' } });
       }
-      if (await User.exists({ email, _id: { $ne: user._id } })) return emailTaken(res);
+      if (await User.exists({ email, _id: mongoose.trusted({ $ne: user._id }) })) return emailTaken(res);
       user.email = email;
     }
 

@@ -19,7 +19,7 @@ const Reports = () => {
             try {
                 const token = localStorage.getItem('token');
 
-                const query = searchTerm ? `?search=${searchTerm}` : '';
+                const query = `?limit=50${searchTerm ? `&search=${encodeURIComponent(searchTerm)}` : ''}`;
                 const res = await axios.get(`${import.meta.env.VITE_API_URL}/reports${query}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -43,7 +43,7 @@ const Reports = () => {
         if (!searchTerm) {
             navigate('/reports', { replace: true });
         } else {
-            navigate(`/reports?search=${searchTerm}`, { replace: true });
+            navigate(`/reports?search=${encodeURIComponent(searchTerm)}`, { replace: true });
         }
     }, [searchTerm, navigate]);
 

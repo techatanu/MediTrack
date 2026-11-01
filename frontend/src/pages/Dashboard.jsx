@@ -10,6 +10,7 @@ import './Dashboard.css';
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const [reports, setReports] = useState([]);
+  const [reportsTotal, setReportsTotal] = useState(0);
   const [doctorsCount, setDoctorsCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -28,6 +29,7 @@ const Dashboard = () => {
         ]);
 
         setReports(reportsRes.data.data);
+        setReportsTotal(reportsRes.data.pagination.total);
         setDoctorsCount(doctorsRes.data.data.length);
         setLoading(false);
       } catch (err) {
@@ -115,7 +117,7 @@ const Dashboard = () => {
               </div>
               <div className="stat-value">
                 <span className="value-icon"><FileText size={20} /></span>
-                <span className="number">{reports.length}</span>
+                <span className="number">{reportsTotal}</span>
               </div>
             </div>
 
