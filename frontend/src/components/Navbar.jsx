@@ -1,30 +1,33 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { HeartPulse, Menu, X } from 'lucide-react';
 import './Navbar.css';
 
 const Navbar = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const links = [
+    ['Home', '/#home'],
+    ['Features', '/#features'],
+    ['How it works', '/#how-it-works'],
+    ['AI assistant', '/#assistant'],
+    ['About', '/#about'],
+  ];
+
   return (
-    <nav className="navbar">
-      <div className="container navbar-container">
-        <Link to="/" className="navbar-logo">
-          <div className="logo-icon">
-            <img src="/MediTrackLogo.png" alt="meditrack-logo" />
-          </div>
-          <span>MediTrack</span>
+    <header className="mt-nav">
+      <div className="mt-nav-inner">
+        <Link to="/" className="mt-nav-brand" aria-label="MediTrack home">
+          <span className="mt-nav-mark"><HeartPulse size={19} strokeWidth={2.1} /></span>
+          <span>MediTrack<small>YOUR HEALTH, IN ONE PLACE</small></span>
         </Link>
-
-        <ul className="navbar-links">
-          <li><Link to="/">Home</Link></li>
-          <li><Link to="/about">About us</Link></li>
-          <li><Link to="/dashboard">Dashboard</Link></li>
-          <li><Link to="/profile">Admin Dashboard</Link></li>
-        </ul>
-
-        <div className="navbar-actions">
-          <Link to="/login" className="login-link">Log in</Link>
-          <Link to="/signup" className="signup-link">Sign up</Link>
-        </div>
+        <nav className={`mt-nav-links ${menuOpen ? 'open' : ''}`} aria-label="Main navigation">
+          {links.map(([label, href]) => <a href={href} key={label} onClick={() => setMenuOpen(false)}>{label}</a>)}
+          <div className="mt-nav-mobile-actions"><Link to="/login" onClick={() => setMenuOpen(false)}>Log in</Link><Link to="/signup" onClick={() => setMenuOpen(false)}>Get started <span>↗</span></Link></div>
+        </nav>
+        <div className="mt-nav-actions"><Link to="/login" className="mt-nav-login">Log in</Link><Link to="/signup" className="mt-nav-cta">Get started <span>↗</span></Link></div>
+        <button className="mt-nav-toggle" type="button" aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X size={21} /> : <Menu size={21} />}</button>
       </div>
-    </nav>
+    </header>
   );
 };
 

@@ -1,5 +1,22 @@
 #MediTrack — Personal Health Record Management System
 
+## Current implementation status
+
+The public homepage has been redesigned as MediTrack: it includes responsive navigation, a healthcare hero, product overview, feature showcase, a synthetic assistant preview with a working source-document dialog, workflow explanation, trust information, and signup/login links. The preview is explicitly labeled as synthetic; it does not call an AI endpoint.
+
+The existing authenticated MERN application remains the source of truth for accounts, doctors, and medical reports. Existing upload, list, view, update, delete, search, and signed file access flows remain in place.
+
+| Capability | Status |
+| --- | --- |
+| Original responsive public landing page | Implemented; build/lint verification pending |
+| Existing JWT authentication and report CRUD | Existing functionality retained; not re-verified in this update |
+| Private report storage and short-lived download URLs | Existing Cloudinary integration; requires configured credentials |
+| OCR, structured extraction, document review, embeddings, vector retrieval, live RAG chat | Not implemented |
+| Synthetic assistant and citation preview | Implemented; demo-only, no private or real patient data |
+| Production deployment | Not performed |
+
+See [docs/architecture.md](docs/architecture.md) for the current system boundary, local setup, and AI integration prerequisites.
+
 ##Project Proposal
 
 ##Project Title
